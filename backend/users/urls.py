@@ -5,6 +5,7 @@ from .views import CurrentUserView, UserTokenObtainPairView, RegisterView
 from rest_framework_simplejwt.views import TokenRefreshView
 
 router = routers.DefaultRouter()
+router.root_view_name = 'Users'
 
 urlpatterns = router.urls
 

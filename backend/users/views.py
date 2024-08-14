@@ -2,10 +2,9 @@ from django.http import JsonResponse
 
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
-from rest_framework_simplejwt.views import TokenObtainPairView
 
 from users.models import AppUser as UserModel
-from users.serializers import UserSerializer, UserTokenObtainPairSerializer, RegisterSerializer
+from users.serializers import UserSerializer
 
 
 class UsersView(generics.ListAPIView):
@@ -20,10 +19,3 @@ class CurrentUserView(generics.ListAPIView):
     def get(self, request, format=None):
         #response = UserModel.objects.get(user=request.user)
         return JsonResponse(self.serializer_class(request.user).data)
-    
-class UserTokenObtainPairView(TokenObtainPairView):
-    serializer_class = UserTokenObtainPairSerializer
-
-class RegisterView(generics.CreateAPIView):
-    permission_classes = [AllowAny]
-    serializer_class = RegisterSerializer

@@ -10,3 +10,6 @@ class AppUser(AbstractUser):
     
     def __str__(self) -> str:
         return self.username
+    
+    def get_messages(self):
+        return self.messages.all()

@@ -22,3 +22,6 @@ class Message(models.Model):
     
     def __str__(self) -> str:
         return f"User: {self.sender.username}, Room: {self.chat.room.key}"
+    
+    class Meta:
+        ordering = ['-date']

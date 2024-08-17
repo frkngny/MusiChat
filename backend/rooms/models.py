@@ -24,4 +24,4 @@ class Room(models.Model):
         return f'{self.key} - {self.host.username}'
     
     def get_chat(self):
-        return self.chat.all()
+        return self.chat

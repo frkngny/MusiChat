@@ -14,14 +14,14 @@ class ChatView(RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ChatSerializer
     
-    def get(self, request, *args, **kwargs):
-        room_key = request.GET.get('room_key')
+    def get(self, request, *args, **kwargs):        
+        room_key = request.data.get('key')
         if room_key is None:
             return JsonResponse({}, status=status.HTTP_400_BAD_REQUEST)
         
         chat = Chat.objects.filter(room__key=room_key)
         if not chat.exists():
-            return JsonResponse({'Chat does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+            return JsonResponse({'message': 'Chat does not exist.'}, status=status.HTTP_404_NOT_FOUND)
         
         return JsonResponse(self.serializer_class(chat[0]).data, status=status.HTTP_200_OK)
 

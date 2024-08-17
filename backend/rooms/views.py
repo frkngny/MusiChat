@@ -35,6 +35,5 @@ class CreateRoomView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            room = Room(host=self.request.user, **serializer.data)
-            room.save()
+            room = Room.objects.create(host=self.request.user, **serializer.data)
             return JsonResponse(RoomSerializer(room).data, status=status.HTTP_201_CREATED)

@@ -15,10 +15,11 @@ def generate_unique_key():
 
 class Room(models.Model):
     host = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='rooms')
+    key = models.CharField(max_length=10, default=generate_unique_key, unique=True, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
     max_users = models.PositiveIntegerField(default=8, validators=[MaxValueValidator(8), MinValueValidator(1)])
     is_public = models.BooleanField(default=True)
-    key = models.CharField(max_length=10, default=generate_unique_key, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    allow_messages = models.BooleanField(default=True)
     
     def __str__(self):
         return f'{self.key} - {self.host.username}'

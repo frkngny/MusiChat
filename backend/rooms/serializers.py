@@ -15,4 +15,4 @@ class RoomSerializer(serializers.ModelSerializer):
 class CreateRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
-        fields = ['max_users', 'is_public']
+        fields = ['max_users', 'is_public', 'allow_messages']

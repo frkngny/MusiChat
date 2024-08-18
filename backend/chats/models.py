@@ -1,8 +1,8 @@
 from django.db import models
 import uuid
-from django.http import JsonResponse
+
 from rooms.models import Room
-from users.models import AppUser as UserModel
+from django.contrib.auth import get_user_model
 
 class Chat(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -16,7 +16,7 @@ class Chat(models.Model):
 
 class Message(models.Model):
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='messages')
-    sender = models.ForeignKey(UserModel, on_delete=models.DO_NOTHING, related_name='messages')
+    sender = models.ForeignKey(get_user_model(), on_delete=models.DO_NOTHING, related_name='messages')
     text = models.CharField(max_length=500, null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
     

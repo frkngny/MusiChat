@@ -1,9 +1,10 @@
 from django.http import JsonResponse
 
 from rest_framework import generics
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
-from users.models import AppUser as UserModel
+from django.conf.global_settings import AUTH_USER_MODEL
+from django.contrib.auth import get_user_model
 from users.serializers import UserSerializer
 
 from chats.models import Message
@@ -12,7 +13,7 @@ from chats.serializers import MessageSerializer
 
 class UsersView(generics.ListAPIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
-    queryset = UserModel.objects.all()
+    queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
     
 class CurrentUserView(generics.ListAPIView):
@@ -32,7 +33,7 @@ class UserMessagesView(generics.ListAPIView):
             return super().get(request, *args, **kwargs)
         
         user_id = request.data.get("user_id")
-        user = UserModel.objects.get(pk=user_id)
+        user = get_user_model().objects.get(pk=user_id)
         messages = Message.objects.filter(sender=user)
         
         return JsonResponse({'user': self.user_serializer_class(user).data, 'messages': self.message_serializer_class(messages, many=True).data}, safe=False)

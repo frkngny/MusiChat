@@ -2,7 +2,7 @@ from django.http import JsonResponse
 
 from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from .serializers import CreateRoomSerializer, RoomSerializer
 from .models import Room

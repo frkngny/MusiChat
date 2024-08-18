@@ -2,13 +2,11 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
 from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from rest_framework.generics import RetrieveAPIView, CreateAPIView
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Chat, Message
 from .serializers import ChatSerializer, MessageSerializer
-from rooms.models import Room
 
 
 class ChatView(RetrieveAPIView):

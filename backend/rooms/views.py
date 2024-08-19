@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 
 from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
@@ -16,18 +17,18 @@ class RoomsView(ListAPIView):
 class RoomView(RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = RoomSerializer
-    lookup_url_kwarg = 'key'
+    queryset = Room.objects.all()
+    lookup_field = 'key'
     
     def get(self, request, *args, **kwargs):
-        key = request.data.get(self.lookup_url_kwarg)
-        if key:
-            room = Room.objects.filter(key=request.data.get(self.lookup_url_kwarg))
-            if room.exists():
-                room = room[0]
+        field = request.data.get(self.lookup_field)
+        if field:
+            filter = {self.lookup_field: field}
+            room = get_object_or_404(self.queryset, **filter)
+            if room:
                 return JsonResponse(self.serializer_class(room).data, status=status.HTTP_200_OK)
-        return JsonResponse({'message': ''}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({'message': f'Please provide "{self.lookup_field}".'}, status=status.HTTP_400_BAD_REQUEST)
         
-
 class CreateRoomView(CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = CreateRoomSerializer
@@ -37,3 +38,17 @@ class CreateRoomView(CreateAPIView):
         if serializer.is_valid():
             room = Room.objects.create(host=self.request.user, **serializer.data)
             return JsonResponse(RoomSerializer(room).data, status=status.HTTP_201_CREATED)
+        
+class MyRoomsView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = RoomSerializer
+    
+    def get_queryset(self):
+        return Room.objects.filter(host=self.request.user)
+
+class PublicRoomsView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = RoomSerializer
+    
+    def get_queryset(self):
+        return Room.objects.filter(is_public=True)

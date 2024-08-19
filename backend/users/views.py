@@ -27,13 +27,14 @@ class UserMessagesView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     user_serializer_class = UserSerializer
     message_serializer_class = MessageSerializer
+    lookup_field = 'user_id'
     
     def get(self, request, *args, **kwargs):
-        if not request.data.get("user_id"):
-            return super().get(request, *args, **kwargs)
+        if not request.data.get(self.lookup_field):
+            return JsonResponse({'message': f'Please provide "{self.lookup_field}".'}, safe=False)
         
-        user_id = request.data.get("user_id")
-        user = get_user_model().objects.get(pk=user_id)
+        field = request.data.get(self.lookup_field)
+        user = get_user_model().objects.get(pk=field)
         messages = Message.objects.filter(sender=user)
         
         return JsonResponse({'user': self.user_serializer_class(user).data, 'messages': self.message_serializer_class(messages, many=True).data}, safe=False)

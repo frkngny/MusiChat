@@ -11,4 +11,5 @@ urlpatterns = router.urls
 urlpatterns += [
     path('chat', ChatDetailView.as_view(), name='get-chat'),
     path('create', CreateChatView.as_view(), name='create-chat'),
+    path('chat/send-message', CreateMessageView.as_view(), name='send-chat-message'),
 ]

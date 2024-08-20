@@ -7,8 +7,13 @@ class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)
     class Meta:
         model = Message
-        # fields = '__all__'
         exclude = ['chat']
+        
+class SendMessageSerializer(serializers.ModelSerializer):
+    text = serializers.CharField(required=True, max_length=500)
+    class Meta:
+        model = Message
+        fields = '__all__'
         
 class RoomChatSerializer(serializers.ModelSerializer):
     class Meta:

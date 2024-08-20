@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
 from rest_framework import status
-from rest_framework.generics import RetrieveAPIView, CreateAPIView
+from rest_framework.generics import RetrieveAPIView, CreateAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Chat, Message
@@ -53,3 +53,9 @@ class MessageView(RetrieveAPIView):
         message = get_object_or_404(Message, sender=request.user)
         
         return JsonResponse(self.serializer_class(message).data, status=status.HTTP_201_CREATED)
+
+class ChatMessagesView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = MessageSerializer
+    queryset = Message.objects.all()
+    lookup_field = 'chat'

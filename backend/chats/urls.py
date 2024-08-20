@@ -1,7 +1,7 @@
 from rest_framework import routers
 from django.urls import path
 
-from .views import ChatDetailView, CreateChatView, CreateMessageView
+from .views import ChatDetailView, CreateChatView, CreateMessageView, ChatMessagesView
 
 router = routers.DefaultRouter()
 router.root_view_name = 'Chats'
@@ -12,4 +12,5 @@ urlpatterns += [
     path('chat', ChatDetailView.as_view(), name='get-chat'),
     path('create', CreateChatView.as_view(), name='create-chat'),
     path('chat/send-message', CreateMessageView.as_view(), name='send-chat-message'),
+    path('chat/messages', ChatMessagesView.as_view(), name='get-chat-messages'),
 ]

@@ -9,6 +9,9 @@ from .models import Chat, Message
 from .serializers import ChatSerializer, MessageSerializer, SendMessageSerializer
 from .mixins import MultipleFieldLookupMixin
 
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+
 class ChatDetailView(MultipleFieldLookupMixin, RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ChatSerializer
@@ -39,7 +42,18 @@ class CreateMessageView(CreateAPIView):
         
         message = Message.objects.create(**serializer.validated_data)
         
-        return JsonResponse(self.serializer_class(message).data, status=status.HTTP_201_CREATED)
+        # send message through websocket
+        channel_group_name = 'chat_%s' % message.chat.room.key
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            channel_group_name,
+            {
+                'type': 'chat_message',
+                'message': MessageSerializer(message).data
+            }
+        )
+        
+        return JsonResponse(MessageSerializer(message).data, status=status.HTTP_201_CREATED)
 
 class MessageView(RetrieveAPIView):
     permission_classes = [IsAuthenticated]

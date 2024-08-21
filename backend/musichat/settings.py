@@ -18,7 +18,6 @@ DEBUG = int(os.environ.get("DEBUG", default=0))
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
 # Application definition
-
 INSTALLED_APPS = [
     'daphne',
     'django.contrib.admin',
@@ -29,8 +28,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    'channels',
     'users',
     'rooms',
     'chats',
@@ -79,15 +78,15 @@ DATABASES = {
 }
 
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [(os.environ.get("REDIS_HOST"), os.environ.get("REDIS_PORT"))],
-        },
-    },
-    # "memory": {
-    #     "BACKEND": "channels.layers.InMemoryChannelLayer"
+    # "default": {
+    #     "BACKEND": "channels_redis.core.RedisChannelLayer",
+    #     "CONFIG": {
+    #         "hosts": [(os.environ.get("REDIS_HOST"), os.environ.get("REDIS_PORT"))],
+    #     },
     # },
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    },
 }
 
 # Password validation
@@ -131,8 +130,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#CORS_ALLOWED_ORIGINS=['http://localhost']
-CORS_ALLOW_ALL_ORIGINS=True
+CORS_ALLOWED_ORIGINS=os.environ.get("CORS_ALLOWED_ORIGINS").split(" ")
+#CORS_ALLOW_ALL_ORIGINS=True
 
 AUTH_USER_MODEL = 'users.AppUser'
 

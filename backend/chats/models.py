@@ -24,4 +24,4 @@ class Message(models.Model):
         return f"User: {self.sender.username}, Room: {self.chat.room.key}"
     
     class Meta:
-        ordering = ['-date']
+        ordering = ['date']

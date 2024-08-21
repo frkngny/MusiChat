@@ -21,9 +21,27 @@ class RoomChatConsumer(AsyncWebsocketConsumer):
             }
         )
     
+    async def chat_message(self, event):
+        message = event['message']
+        await self.send(
+                text_data=json.dumps(
+                    {
+                        'type': 'message',
+                        'message': message
+                    }
+                )
+            )
+        
     async def welcome_message(self, event):
         message = event['message']
-        await self.send(text_data=json.dumps({'message': message}))
+        await self.send(
+                text_data=json.dumps(
+                    {
+                        'type': 'welcome_message',
+                        'message': message
+                    }
+                )
+            )
     
     async def disconnect(self, close_code):
         self.channel_layer.group_discard(

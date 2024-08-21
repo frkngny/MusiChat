@@ -5,9 +5,10 @@ from users.serializers import UserSerializer
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)
+    chat = serializers.CharField()
     class Meta:
         model = Message
-        exclude = ['chat']
+        fields = '__all__'
         
 class SendMessageSerializer(serializers.ModelSerializer):
     text = serializers.CharField(required=True, max_length=500)

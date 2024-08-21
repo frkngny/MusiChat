@@ -7,7 +7,7 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv()
+load_dotenv(dotenv_path=os.path.join(BASE_DIR.parent,'.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -130,7 +130,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS=os.environ.get("CORS_ALLOWED_ORIGINS").split(" ")
+CORS_ALLOWED_ORIGINS=os.environ.get("CORS_ALLOWED_ORIGINS").split(" ") # ['http://localhost:5173'] #
 #CORS_ALLOW_ALL_ORIGINS=True
 
 AUTH_USER_MODEL = 'users.AppUser'

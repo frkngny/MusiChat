@@ -17,7 +17,7 @@ const HomePage = () => {
                 {openCreateRoomModal &&
                     <RoomCreate open={openCreateRoomModal} closeCallback={() => closeRoomCreateModal()}/>}
                 <p>Public rooms</p>
-                <PublicRooms refresh={openCreateRoomModal}/>
+                <PublicRooms />
             </div>
         </>
     )

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import useAxios from '../hooks/useAxios';
-import { Each } from './Each';
+import useAxios from '../../hooks/useAxios';
+import { Each } from '../Each';
 import RoomCard from './RoomCard';
 
 export const PublicRooms = () => {
@@ -15,18 +15,17 @@ export const PublicRooms = () => {
                 const resp = await axios.get('/rooms/public');
                 setPublicRooms(resp.data);
             } catch (error) {
-                console.log(error.response)
+                console.log(error)
             }
         }
         fetchData();
-        
-    },[]);
+    }, []);
 
     return (
-        <div>
-            <Each of={publicRooms} render={(item, index) => 
-                <RoomCard room={item}/>
-            }/>
+        <div className='w-fit flex-grow max-h-screen p-2 m-2 outline-dashed outline-1'>
+            <Each of={publicRooms} render={(item, index) =>
+                <RoomCard room={item} />
+            } />
         </div>
     )
 }

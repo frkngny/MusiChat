@@ -21,6 +21,9 @@ class Room(models.Model):
     is_public = models.BooleanField(default=True)
     allow_messages = models.BooleanField(default=True)
     
+    class Meta:
+        ordering = ['-created_at']
+    
     def __str__(self):
         return f'{self.key} - {self.host.username}'
     

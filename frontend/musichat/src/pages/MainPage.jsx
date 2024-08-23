@@ -18,8 +18,8 @@ const MainPage = () => {
                         {isToLogin ? <Login /> : <Register />}
                     </div>
 
-                    <button type="submit" className="bg-white flex self-end" onClick={btnClickHandler}>
-                        { isToLogin ? "Don't have an account?" : "Already have an account?" }
+                    <button type="submit" className="bg-white flex mt-1 p-1 text-black border rounded-md border-solid border-lime-700 hover:shadow-inner hover:shadow-green-700" onClick={btnClickHandler}>
+                        { isToLogin ? "I am new." : "Wait! I was here before." }
                     </button>
                 </div>
             </div>

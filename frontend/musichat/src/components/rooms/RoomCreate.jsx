@@ -3,6 +3,7 @@ import useAxios from '../../hooks/useAxios';
 import { Modal, Box } from '@mui/material';
 import AuthContext from '../../context/AuthContext';
 import { Each } from '../Each';
+import { useNavigate } from 'react-router-dom';
 
 const RoomCreate = (props) => {
 
@@ -28,26 +29,21 @@ const RoomCreate = (props) => {
     const modalBoxClassName = 'absolute z-10 translate-x-1/2 translate-y-1/2 size-2/5 bg-black shadow-inner shadow-white p-6 justify-center self-center';
 
     const axios = useAxios();
+    const navigate = useNavigate();
 
-    const fetchData = async (x) => {
+    const fetchData = async (formOptions) => {
         try {
-            const resp = await axios.post('/rooms/create', {
-                json: x,
-            });
+            const resp = await axios.post('/rooms/create', formOptions);
             console.log(resp);
-            /**
-             * @todo: navigate to created room.
-             */
+            navigate(`/room/${resp.data.key}`);
             closeCallback();
         } catch (error) {
             console.log(error);
         }
     }
 
-    
-
     const handleClick = (e) => {
-        let creationForm = {};
+        const formData = new FormData();
         for (var formRef in refs) {
             var current = refs[formRef].current;
             var val;
@@ -55,10 +51,9 @@ const RoomCreate = (props) => {
                 val = current.checked;
             else
                 val = current.value;
-            creationForm[current.name] = val;
-            
+            formData.append(current.name, val);
         }
-        fetchData(creationForm);
+        fetchData(formData);
     };
 
     return (

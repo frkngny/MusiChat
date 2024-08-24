@@ -71,7 +71,8 @@ function Register() {
             } />
             <button
                 type="submit"
-                className="w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-md font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500"
+                className="w-full rounded-md bg-green-700 py-1.5 font-bold text-white
+                    hover:shadow-inner hover:shadow-green-700 hover:bg-white hover:text-black"
             >
                 Knock! Knock!
             </button>

@@ -4,6 +4,7 @@ import { ProtectedRoutes } from "./context/ProtectedRoutes.jsx";
 
 import MainPage from './pages/MainPage';
 import HomePage from './pages/HomePage';
+import RoomPage from './pages/rooms/RoomPage';
 import React from 'react';
 import './App.css'
 
@@ -18,6 +19,7 @@ function App() {
           {/* Prevent to route if user is not logged in*/}
           <Route element={<ProtectedRoutes />}>
             <Route exact path="/home" element={<HomePage />} />
+            <Route exact path="/room/:roomKey" element={<RoomPage />} />
           </Route>
         </Routes>
       </AuthProvider>

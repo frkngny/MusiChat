@@ -16,7 +16,7 @@ class ChatDetailView(MultipleFieldLookupMixin, RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ChatSerializer
     queryset = Chat.objects.all()
-    lookup_fields = ['room__key', 'room_id']
+    lookup_fields = ['id', 'room']
     
 
 class CreateChatView(CreateAPIView):

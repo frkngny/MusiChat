@@ -21,7 +21,7 @@ class RoomView(RetrieveAPIView):
     lookup_field = 'key'
     
     def get(self, request, *args, **kwargs):
-        field = request.data.get(self.lookup_field)
+        field = request.GET.get(self.lookup_field)
         if field:
             filter = {self.lookup_field: field}
             room = get_object_or_404(self.queryset, **filter)

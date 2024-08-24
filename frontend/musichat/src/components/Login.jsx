@@ -35,7 +35,7 @@ function Login() {
                             {item.label}
                         </label>
                         <input
-                            id={item.name + "-form"}
+                            id={item.name + "-form-login"}
                             name={item.name}
                             type={item.type}
                             required
@@ -54,7 +54,8 @@ function Login() {
                 } />
                 <button
                     type="submit"
-                    className="w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-md font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500"
+                    className="w-full rounded-md bg-black py-1.5 font-bold text-white
+                    hover:shadow-inner hover:shadow-black hover:bg-white hover:text-black"
                 >
                     Let's Party!
                 </button>

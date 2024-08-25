@@ -17,7 +17,7 @@ class RoomChatConsumer(AsyncWebsocketConsumer):
             self.room_chat_group_name,
             {
                 'type': 'welcome_message',
-                'message': 'Hello!'
+                'message': 'You can now send messages.'
             }
         )
     
@@ -26,7 +26,7 @@ class RoomChatConsumer(AsyncWebsocketConsumer):
         await self.send(
                 text_data=json.dumps(
                     {
-                        'type': 'message',
+                        'type': 'chat_message',
                         'message': message
                     }
                 )

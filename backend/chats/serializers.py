@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from .models import Chat, Message
 from users.serializers import UserSerializer
+from rooms.models import Room
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)
@@ -25,4 +26,4 @@ class ChatSerializer(serializers.ModelSerializer):
     messages = MessageSerializer(source='get_messages', many=True)
     class Meta:
         model = Chat
-        fields = '__all__'
+        fields = ['id', 'messages', 'get_room']

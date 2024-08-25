@@ -13,6 +13,9 @@ class Chat(models.Model):
     
     def get_messages(self):
         return self.messages.all()
+    
+    def get_room(self):
+        return {'id': self.room.id, 'key': self.room.key}
 
 class Message(models.Model):
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='messages')

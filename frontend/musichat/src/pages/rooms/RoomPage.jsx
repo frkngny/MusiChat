@@ -25,7 +25,7 @@ const RoomPage = (props) => {
     }, [])
 
     return (
-        <div className='min-h-screen max-h-screen grid grid-cols-3 gap-2 overflow-hidden'>
+        <div className='h-screen grid grid-cols-3 gap-2 overflow-hidden'>
             <div className='bg-black col-span-2 h-4/5 rounded-r-xl'>
                 {room && <RoomChat chat_id={room.chat} roomKey={roomKey} />}
             </div>

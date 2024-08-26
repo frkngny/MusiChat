@@ -12,7 +12,7 @@ export const MessageLeft = (props) => {
                     src={photoURL}
                 ></Avatar> */}
                 <div className="shrink">
-                    <div className='bg-gray-800 p-1'>
+                    <div className='bg-gray-800 rounded-md p-1'>
                         <p className='text-white'>{message.text}</p>
                         {/* <div className={classes.messageTimeStampRight}>{timestamp}</div> */}
                     </div>

@@ -56,8 +56,8 @@ const RoomChat = (props) => {
     }
 
     return (
-        <div className='m-1 max-h-full min-h-full overflow-y-hidden'>
-            <div className='bg-green-900 rounded-xl overflow-y-auto mb-1 pb-2' ref={messageViewRef}>
+        <div className='m-1 relative'>
+            <div className='bg-green-900 sm:max-h-[32rem] md:max-h-[36rem] lg:max-h-[43rem] overflow-y-auto overflow-x-hidden mb-1 pb-2' ref={messageViewRef}>
                 {
                     messages &&
                     <Each of={messages} render={(message, index) =>
@@ -68,10 +68,10 @@ const RoomChat = (props) => {
                     } />
                 }
             </div>
-            <div >
-                <form onSubmit={sendMessage} className='max-h-10 h-10 min-h-10 bottom-0 flex p-1 mb-2'>
-                    <input type='text' className='rounded-md w-full p-2' id='message-text' name='messageText' />
-                    <button type='submit' className='text-white shadow-inner shadow-white hover:bg-green-700 w-24 ms-2' >Send</button>
+            <div className='max-h-10 h-10 min-h-10 w-full bottom-0 pb-1'>
+                <form onSubmit={sendMessage}>
+                    <input type='text' className='rounded-md p-2 w-[90%]' id='message-text' name='messageText' />
+                    <button type='submit' className='text-white shadow-inner shadow-white hover:bg-green-700 w-[8%] h-8 ms-2' >Send</button>
                 </form>
             </div>
         </div>

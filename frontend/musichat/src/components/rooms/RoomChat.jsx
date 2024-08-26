@@ -9,11 +9,10 @@ const RoomChat = (props) => {
     const { chat_id, roomKey } = props
 
     const [chat, setChat] = useState(null);
-    const [messages, setMessages] = useState(null);
+    const [messages, setMessages] = useState([]);
+    const [socket, setSocket] = useState(null);
     const axios = useAxios();
     const { user } = useContext(AuthContext);
-
-    const [messageReceived, setMessageReceived] = useState(false);
 
     useEffect(() => {
         try {
@@ -24,22 +23,34 @@ const RoomChat = (props) => {
         } catch (error) {
             console.log(error);
         }
-    }, [messageReceived])
+    }, [roomKey])
 
     // websocket
-    const socket = useSocket(`/chat/${roomKey}`);
-    socket.onmessage = function (e) {
-        const data = JSON.parse(e.data);
-        if (data.type === 'chat_message') {
-            setMessageReceived(!messageReceived);
-        }
+    if (socket === null) {
+        setSocket(useSocket(`/chat/${roomKey}`));
     }
+    else {
+        socket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            if (data.type === 'chat_message') {
+                setMessages([...messages, data.message]);
+            }
+        }
+        const terminationEvent = 'onpagehide' in self ? 'pagehide' : 'unload';
+        window.addEventListener(terminationEvent, (event) => {
+            if (event.persisted === false) {
+                // client is gone
+                socket.close();
+            }
+        });
+    }
+
 
     // Scroll to the last message automatically
     const messageViewRef = useRef(null);
     useEffect(() => {
         messageViewRef.current?.lastElementChild?.scrollIntoView()
-    }, [chat]);
+    }, [messages]);
 
     // send message
     const sendMessage = async (e) => {
@@ -50,31 +61,33 @@ const RoomChat = (props) => {
             messageForm.append('chat', chat.id)
             messageForm.append('text', text);
             messageForm.append('sender', user.user_id);
-            axios.post('/chats/chat/send-message', messageForm);
+            await axios.post('/chats/chat/send-message', messageForm);
         }
         e.target.messageText.value = "";
     }
 
     return (
-        <div className='m-1 relative'>
-            <div className='bg-green-900 sm:max-h-[32rem] md:max-h-[36rem] lg:max-h-[43rem] overflow-y-auto overflow-x-hidden mb-1 pb-2' ref={messageViewRef}>
-                {
-                    messages &&
-                    <Each of={messages} render={(message, index) =>
-                        message.sender.username !== user.username ?
-                            <MessageLeft message={message} />
-                            :
-                            <MessageRight message={message} />
-                    } />
-                }
+        <>
+            <div className='m-1 flex-1 overflow-y-auto max-h-[90%]'>
+                <div className='bg-green-900 rounded-r-xl overflow-y-auto flex flex-col space-y-1' ref={messageViewRef}>
+                    {
+                        messages &&
+                        <Each of={messages} render={(message, index) =>
+                            message.sender.username !== user.username ?
+                                <MessageLeft message={message} />
+                                :
+                                <MessageRight message={message} />
+                        } />
+                    }
+                </div>
             </div>
-            <div className='max-h-10 h-10 min-h-10 w-full bottom-0 pb-1'>
+            <div className='w-full m-auto flex-1'>
                 <form onSubmit={sendMessage}>
                     <input type='text' className='rounded-md p-2 w-[90%]' id='message-text' name='messageText' />
                     <button type='submit' className='text-white shadow-inner shadow-white hover:bg-green-700 w-[8%] h-8 ms-2' >Send</button>
                 </form>
             </div>
-        </div>
+        </>
     )
 }
 

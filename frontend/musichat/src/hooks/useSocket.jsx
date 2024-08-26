@@ -10,6 +10,9 @@ const useSocket = (endpoint) => {
     webSocket.onopen = function (e) {
         console.log(`Web socket is connected (${endpoint})`)
     }
+    webSocket.onclose = function (e) {
+        console.log(e.reason);
+    }
     return webSocket;
 }
 

@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
+import JoinRoomButton from './JoinRoomButton';
 
 const RoomCard = (props) => {
     const { room } = props
@@ -27,7 +28,7 @@ const RoomCard = (props) => {
                 </Typography>
             </CardContent>
             <CardActions>
-                <Button size="small" onClick={joinRoomHandler}>Join</Button>
+                <JoinRoomButton room_key={room.key}/>
             </CardActions>
         </Card>
     )

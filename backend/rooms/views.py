@@ -1,8 +1,9 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
 
 from rest_framework import status
-from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from .serializers import CreateRoomSerializer, RoomSerializer
@@ -52,3 +53,22 @@ class PublicRoomsView(ListAPIView):
     
     def get_queryset(self):
         return Room.objects.filter(is_public=True)
+
+class JoinRoomView(UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    
+    def put(self, request, *args, **kwargs):
+        room_key = request.data.get('room_key')
+        room = Room.objects.get(key=room_key)
+
+        if int(room.joined_users.count()) >= room.max_users:
+            return JsonResponse({'error': 'Room is full.'})
+        
+        user = request.user
+        user_joined_rooms = user.get_joined_rooms()
+        if len(user_joined_rooms) > 0:
+            return JsonResponse({'error': f'You need to leave room {user_joined_rooms[0].key}'})
+        
+        room.joined_users.add(user)
+        
+        return JsonResponse({'success': f'Joined room {room.key}'})

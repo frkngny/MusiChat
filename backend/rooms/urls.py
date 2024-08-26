@@ -1,7 +1,7 @@
 from rest_framework import routers
 from django.urls import path
 
-from .views import CreateRoomView, RoomsView, RoomView, MyRoomsView, PublicRoomsView
+from .views import CreateRoomView, RoomsView, RoomView, MyRoomsView, PublicRoomsView, JoinRoomView
 
 router = routers.DefaultRouter()
 router.root_view_name = 'Rooms'
@@ -14,4 +14,5 @@ urlpatterns += [
     path('room', RoomView.as_view(), name='get_room'),
     path('my', MyRoomsView.as_view(), name='my'),
     path('public', PublicRoomsView.as_view(), name='public'),
+    path('join', JoinRoomView.as_view(), name='join_room')
 ]

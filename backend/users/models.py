@@ -13,3 +13,6 @@ class AppUser(AbstractUser):
     
     def get_messages(self):
         return self.messages.all()
+    
+    def get_joined_rooms(self):
+        return self.in_room.all()

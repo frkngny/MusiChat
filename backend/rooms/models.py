@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import AppUser as UserModel
+from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 import random, string
@@ -14,12 +14,13 @@ def generate_unique_key():
     return key
 
 class Room(models.Model):
-    host = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='rooms')
+    host = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='rooms')
     key = models.CharField(max_length=10, default=generate_unique_key, unique=True, editable=False)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     max_users = models.PositiveIntegerField(default=8, validators=[MaxValueValidator(8), MinValueValidator(1)])
     is_public = models.BooleanField(default=True)
     allow_messages = models.BooleanField(default=True)
+    joined_users = models.ManyToManyField(get_user_model(), related_name='in_room')
     
     class Meta:
         ordering = ['-created_at']

@@ -3,8 +3,45 @@
 @tailwind utilities;
 
 
-#root{
+#root {
   max-height: 100vh;
+}
+
+.animated-box {
+  place-content: center;
+  color: white;
+  text-shadow: 0 1px 0 #000;
+
+  --border-angle: 0turn;
+  --main-bg: conic-gradient(from var(--border-angle),
+      #0c5e19,
+      #0AA968 5%,
+      #0AA968 60%,
+      #0c5e19 95%);
+
+  border: solid 5px transparent;
+  border-radius: 2em;
+  --gradient-border: conic-gradient(from var(--border-angle), transparent 25%, rgb(0, 80, 10), rgb(0, 0, 0), transparent);
+  background: var(--main-bg) padding-box,var(--gradient-border) border-box, var(--main-bg) border-box;
+  background-position: center center;
+  animation: bg-spin 4s linear infinite;
+
+  &:hover:first-child {
+    transform: scale(1.2);
+    animation: bg-spin 2s linear infinite;
+    animation-direction: reverse;
+    --gradient-border: conic-gradient(from var(0turn), transparent 25%, rgb(0, 0, 0), rgb(0, 80, 10), transparent);
+  }
+}
+@keyframes bg-spin {
+  to {
+    --border-angle: 1turn;
+  }
+}
+@property --border-angle {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0turn;
 }
 
 .logo {

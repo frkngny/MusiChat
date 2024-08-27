@@ -12,8 +12,9 @@ export const PublicRooms = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const resp = await axios.get('/rooms/public');
-                setPublicRooms(resp.data);
+                await axios.get('/rooms/public').then((resp) => {
+                    setPublicRooms(resp.data);
+                });
             } catch (error) {
                 console.log(error)
             }

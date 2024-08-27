@@ -72,3 +72,15 @@ class JoinRoomView(UpdateAPIView):
         room.joined_users.add(user)
         
         return JsonResponse({'success': f'Joined room {room.key}'})
+
+class LeaveRoomView(UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    
+    def put(self, request, *args, **kwargs):
+        room_key = request.data.get('room_key')
+        room = Room.objects.get(key=room_key)
+        
+        user = request.user
+        room.joined_users.remove(user)
+        
+        return JsonResponse({'success': f'Joined room {room.key}'})

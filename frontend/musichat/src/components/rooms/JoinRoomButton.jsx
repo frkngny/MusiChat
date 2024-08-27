@@ -32,7 +32,8 @@ const JoinRoomButton = (props) => {
 
     return (
         <>
-            <button onClick={handleJoin}>
+            <button onClick={handleJoin}
+                className='bg-green-900 text-white font-bold p-1 animated-box'>
                 Join
             </button>
         </>

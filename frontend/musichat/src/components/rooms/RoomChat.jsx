@@ -36,8 +36,7 @@ const RoomChat = (props) => {
                 setMessages([...messages, data.message]);
             }
         }
-        const terminationEvent = 'onpagehide' in self ? 'pagehide' : 'unload';
-        window.addEventListener(terminationEvent, (event) => {
+        window.addEventListener('pagehide', (event) => {
             if (event.persisted === false) {
                 // client is gone
                 socket.close();
@@ -68,7 +67,7 @@ const RoomChat = (props) => {
 
     return (
         <>
-            <div className='m-1 flex-1 overflow-y-auto max-h-[90%]'>
+            <div className='m-1 flex-1 overflow-y-auto max-h-[90%] mb-2'>
                 <div className='bg-green-900 rounded-r-xl overflow-y-auto flex flex-col space-y-1' ref={messageViewRef}>
                     {
                         messages &&

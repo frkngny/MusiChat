@@ -30,3 +30,6 @@ class Room(models.Model):
     
     def get_chat(self):
         return self.chat
+    
+    def joined_users_count(self):
+        return self.joined_users.count()

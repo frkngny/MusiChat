@@ -4,10 +4,10 @@ import useAxios from '../../hooks/useAxios';
 import Swal from 'sweetalert2';
 
 const JoinRoomButton = (props) => {
-    const { room_key, ...others } = props;
+    const { roomKey, ...others } = props;
 
     const formData = new FormData();
-    formData.append('room_key', room_key)
+    formData.append('room_key', roomKey)
 
     const navigate = useNavigate();
     const axios = useAxios();
@@ -15,7 +15,7 @@ const JoinRoomButton = (props) => {
     const handleJoin = () => {
         axios.put('/rooms/join', formData).then((resp) => {
             if (Object.keys(resp.data).includes('success')) {
-                navigate(`/room/${room_key}`);
+                navigate(`/room/${roomKey}`);
             } else {
                 Swal.fire({
                     title: resp.data.error,

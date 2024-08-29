@@ -61,6 +61,9 @@ class JoinRoomView(UpdateAPIView):
         room_key = request.data.get('room_key')
         room = Room.objects.get(key=room_key)
 
+        if room.joined_users.contains(request.user):
+            return JsonResponse({'success': ''})
+        
         if int(room.joined_users.count()) >= room.max_users:
             return JsonResponse({'error': 'Room is full.'})
         

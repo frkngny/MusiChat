@@ -1,10 +1,9 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import useAxios from '../../hooks/useAxios';
-import Swal from 'sweetalert2';
 
 const LeaveRoomButton = (props) => {
-    const { room_key, ...others } = props;
+    const { room_key, onCardClick, ...others } = props;
 
     const formData = new FormData();
     formData.append('room_key', room_key)
@@ -18,13 +17,14 @@ const LeaveRoomButton = (props) => {
                 navigate(`/home`);
             }
         });
+        if (onCardClick) { onCardClick(); }
     }
-    
+
     return (
         <>
             <button onClick={handleLeave}
-                className='text-red-800 bg-green-800 hover:first:rotate-180'>
-                <span className='font-bold'>X</span> Leave
+                className='text-red-800 bg-green-800 font-bold p-1 '>
+                <span >X</span> Leave
             </button>
         </>
     )

@@ -13,6 +13,11 @@ const RoomCard = (props) => {
     const { room, ...others } = props
     const { user } = useContext(AuthContext);
 
+    const leaveRoomCallback = () => {
+        const index = room.joined_users.indexOf(user.user_id);
+        room.joined_users.splice(index, 1);
+    }
+
     return (
         <Card sx={{ maxWidth: 320, maxHeight: 200 }} className='shadow-md border-green-800 rounded-md justify-center mt-2'>
             <CardContent sx={{ maxHeight: '80%' }}>
@@ -25,9 +30,9 @@ const RoomCard = (props) => {
                 </Typography>
             </CardContent>
             <CardActions sx={{ maxWidth: 'full', maxHeight: '20%' }}>
-                <JoinRoomButton room_key={room.key} />
+                <JoinRoomButton roomKey={room.key} />
                 {room.joined_users.includes(user.user_id) &&
-                    <LeaveRoomButton room_key={room.key} />}
+                    <LeaveRoomButton room_key={room.key} onCardClick={leaveRoomCallback} />}
                 <span className='font-light justify-self-end'>{room.joined_users.length} / {room.max_users}</span>
             </CardActions>
         </Card>

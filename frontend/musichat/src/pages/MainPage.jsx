@@ -1,10 +1,19 @@
 import Login from "../components/Login"
 import Register from "../components/Register"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import ReactCardflip from 'react-card-flip'
+import AuthContext from "../context/AuthContext"
+import { useNavigate } from "react-router-dom"
+import dayjs from "dayjs"
 
 
 const MainPage = () => {
+
+    const { user } = useContext(AuthContext);
+    if(user && dayjs.unix(user.exp).diff(dayjs()) >= 1){
+        const navigate = useNavigate();
+        navigate("/home");
+    }
 
     const [isToLogin, setisToLogin] = useState(false);
 

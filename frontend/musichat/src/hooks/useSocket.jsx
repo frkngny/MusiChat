@@ -11,7 +11,7 @@ const useSocket = (endpoint) => {
         console.log(`Web socket is connected (${endpoint})`)
     }
     webSocket.onclose = function (e) {
-        console.log(e.reason);
+        console.log('Socket is closed');
     }
     return webSocket;
 }

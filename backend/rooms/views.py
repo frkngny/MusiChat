@@ -8,6 +8,10 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from .serializers import CreateRoomSerializer, RoomSerializer
 from .models import Room
+from users.serializers import UserSerializer
+
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 
 class RoomsView(ListAPIView):
@@ -73,6 +77,7 @@ class JoinRoomView(UpdateAPIView):
             return JsonResponse({'error': f'You need to leave room {user_joined_rooms[0].key}'})
         
         room.joined_users.add(user)
+        send_room_users(room)
         
         return JsonResponse({'success': f'Joined room {room.key}'})
 
@@ -85,5 +90,32 @@ class LeaveRoomView(UpdateAPIView):
         
         user = request.user
         room.joined_users.remove(user)
+        send_room_users(room)
         
         return JsonResponse({'success': f'Joined room {room.key}'})
+
+class KickUserView(UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    
+    def put(self, request, *args, **kwargs):
+        room_key = request.data.get('key')
+        room = Room.objects.get(key=room_key)
+        
+        user_id = request.data.get('id')
+        user = get_user_model().objects.get(id=user_id)
+        room.joined_users.remove(user)
+        send_room_users(room)
+        
+        return JsonResponse({'success': f'Kicked {user.username} from room.'})
+
+def send_room_users(room):
+    channel_group_name = 'room_%s' % room.key
+    channel_layer = get_channel_layer()
+    users = UserSerializer(room.joined_users, many=True).data
+    async_to_sync(channel_layer.group_send)(
+        channel_group_name,
+        {
+            'type': 'room_users',
+            'data': users
+        }
+    )

@@ -36,20 +36,17 @@ const RoomChat = (props) => {
                 setMessages([...messages, data.message]);
             }
         }
-        window.addEventListener('pagehide', (event) => {
-            if (event.persisted === false) {
-                // client is gone
-                socket.close();
-            }
-        });
+        onbeforeunload = (event) => { 
+            socket.close();
+        }
     }
 
 
     // Scroll to the last message automatically
     const messageViewRef = useRef(null);
-    useEffect(() => {
-        messageViewRef.current?.lastElementChild?.scrollIntoView()
-    }, [messages]);
+    // useEffect(() => {
+    //     messageViewRef.current?.lastElementChild?.scrollIntoView()
+    // }, [messages]);
 
     // send message
     const sendMessage = async (e) => {
@@ -66,9 +63,9 @@ const RoomChat = (props) => {
     }
 
     return (
-        <>
-            <div className='m-1 flex-1 overflow-y-auto max-h-[90%] mb-2'>
-                <div className='bg-green-900 rounded-r-xl overflow-y-auto flex flex-col space-y-1' ref={messageViewRef}>
+        <div className='h-full max-h-full ms-2'>
+            <div className='m-1  bg-green-900 rounded-r-xl max-h-[90%] mb-2 overflow-y-auto h-[88%]'>
+                <div className='flex flex-col overflow-y-hidden space-y-1 mb-2' ref={messageViewRef}>
                     {
                         messages &&
                         <Each of={messages} render={(message, index) =>
@@ -80,13 +77,13 @@ const RoomChat = (props) => {
                     }
                 </div>
             </div>
-            <div className='w-full m-auto flex-1'>
+            <div className='w-full m-auto'>
                 <form onSubmit={sendMessage}>
                     <input type='text' className='rounded-md p-2 w-[90%]' id='message-text' name='messageText' />
                     <button type='submit' className='text-white shadow-inner shadow-white hover:bg-green-700 w-[8%] h-8 ms-2' >Send</button>
                 </form>
             </div>
-        </>
+        </div>
     )
 }
 

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import useAxios from '../../hooks/useAxios';
 
 const LeaveRoomButton = (props) => {
-    const { room_key, onCardClick, ...others } = props;
+    const { room_key, onCardClick, socket, ...others } = props;
 
     const formData = new FormData();
     formData.append('room_key', room_key)
@@ -18,6 +18,7 @@ const LeaveRoomButton = (props) => {
             }
         });
         if (onCardClick) { onCardClick(); }
+        if (socket) { socket.close(); }
     }
 
     return (

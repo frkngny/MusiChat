@@ -1,17 +1,27 @@
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom';
 import useAxios from '../../hooks/useAxios';
 import RoomChat from '../../components/rooms/RoomChat';
 import LeaveRoomButton from '../../components/rooms/LeaveRoomButton';
+import JoinedUsers from '../../components/rooms/JoinedUsers';
+import AuthContext from '../../context/AuthContext';
+import useSocket from '../../hooks/useSocket';
+import Swal from 'sweetalert2';
 
 
 const RoomPage = (props) => {
     const axios = useAxios();
+    const navigate = useNavigate();
 
     const params = useParams();
     const roomKey = params.roomKey;
 
+    const { user } = useContext(AuthContext);
     const [room, setRoom] = useState(null);
+
+    const [roomUsers, setRoomUsers] = useState([]);
+    const [socket, setSocket] = useState(null);
+
 
     useEffect(() => {
         try {
@@ -31,16 +41,62 @@ const RoomPage = (props) => {
         axios.put('/rooms/leave', formData);
     };
 
+
+    // websocket
+    if (socket === null) {
+        setSocket(useSocket(`/room/${roomKey}`));
+    } else {
+        socket.onload = function (e) {
+            const data = JSON.parse(e.data);
+            if (data.type === 'room_users') {
+                setRoomUsers(data.data);
+            }
+        }
+        socket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            if (data.type === 'room_users') {
+                setRoomUsers(data.data);
+            }
+        }
+        onbeforeunload = (event) => { 
+            socket.close();
+        }
+    }
+
+    useEffect(() => {
+        if (roomUsers.length > 0) {
+            if (roomUsers && !roomUsers.find(u => u.id === user.user_id)) {
+                navigate('/home');
+                Swal.fire({
+                    title: `You are kicked from ${roomKey}.`,
+                    icon: "error",
+                    toast: true,
+                    timer: 3000,
+                    position: 'bottom-right',
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                });
+            }
+        }
+    }, [roomUsers]);
+
     return (
-        <div className='max-h-screen grid grid-cols-3 gap-2'>
-            <div className='col-span-3 max-h-[4%]'>
-                <LeaveRoomButton room_key={roomKey} />
+        <div className='h-full w-full'>
+            <div className='flex h-fit max-h-fit m-2'>
+                <LeaveRoomButton room_key={roomKey} socket={socket} />
             </div>
-            <div className='bg-black col-span-2 max-h-[70%]'>
-                {room && <RoomChat chat_id={room.chat} roomKey={roomKey} />}
-            </div>
-            <div className='max-h-[70%]'>
-                <p>Hello</p>
+            <div className='flex w-full max-h-full h-full space-x-4'>
+                <div className='bg-black max-w-[70%] w-[70%] h-full'>
+                    {room && <RoomChat chat_id={room.chat} roomKey={roomKey} />}
+                </div>
+                <div className='w-[30%] space-y-2 pe-4'>
+                    <div className='w-full space-y-1 max-h-[50%]'>
+                        {roomUsers && <JoinedUsers roomUsers={roomUsers} room={room} />}
+                    </div>
+                    <div className='w-full'>
+                        <p>Hi</p>
+                    </div>
+                </div>
             </div>
         </div>
     )

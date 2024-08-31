@@ -10,22 +10,20 @@ import './App.css'
 
 function App() {
 
-  return (
-    <Router>
-      <AuthProvider>
-        {/*<NavBar />*/}
-        <Routes>
-          <Route path="/" element={<MainPage />} />
-          {/* Prevent to route if user is not logged in*/}
-          <Route element={<ProtectedRoutes />}>
-            <Route exact path="/home" element={<HomePage />} />
-            <Route exact path="/room/:roomKey" element={<RoomPage />} />
-          </Route>
-        </Routes>
-      </AuthProvider>
-    </Router >
-  )
-
+    return (
+        <Router>
+            <AuthProvider>
+                <Routes>
+                    <Route path="/" element={<MainPage />} />
+                    {/* Prevent to route if user is not logged in*/}
+                    <Route element={<ProtectedRoutes />}>
+                        <Route exact path="/home" element={<HomePage />} />
+                        <Route exact path="/room/:roomKey" element={<RoomPage />} />
+                    </Route>
+                </Routes>
+            </AuthProvider>
+        </Router >
+    )
 }
 
 export default App

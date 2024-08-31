@@ -20,7 +20,7 @@ const JoinedUsers = (props) => {
     return (
         <>
             <Each of={roomUsers} render={(roomUser, index) =>
-                <div className='h-12 w-full flex space-x-4 place-items-center justify-items-center rounded-lg border-2 border-emerald-500'>
+                <div className='h-12 w-full flex space-x-4 p-1 place-items-center justify-items-center rounded-lg border-2 border-emerald-500'>
                     <div className='rounded-md'>
                         <p>{roomUser.image}</p>
                     </div>

@@ -9,6 +9,10 @@
   overflow: hidden;
 }
 
+.upto-bottom {
+  max-height: calc(100vh - 100px);
+}
+
 .animated-box {
   place-content: center;
   color: white;

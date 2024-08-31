@@ -7,6 +7,7 @@ import JoinedUsers from '../../components/rooms/JoinedUsers';
 import AuthContext from '../../context/AuthContext';
 import useSocket from '../../hooks/useSocket';
 import Swal from 'sweetalert2';
+import Layout from '../../components/Layout';
 
 
 const RoomPage = (props) => {
@@ -58,7 +59,7 @@ const RoomPage = (props) => {
                 setRoomUsers(data.data);
             }
         }
-        onbeforeunload = (event) => { 
+        onbeforeunload = (event) => {
             socket.close();
         }
     }
@@ -81,24 +82,26 @@ const RoomPage = (props) => {
     }, [roomUsers]);
 
     return (
-        <div className='h-full w-full'>
-            <div className='flex h-fit max-h-fit m-2'>
-                <LeaveRoomButton room_key={roomKey} socket={socket} />
-            </div>
-            <div className='flex w-full max-h-full h-full space-x-4'>
-                <div className='bg-black max-w-[70%] w-[70%] h-full'>
-                    {room && <RoomChat chat_id={room.chat} roomKey={roomKey} />}
+        <>
+            <div className='h-full w-full'>
+                <div className='flex h-fit max-h-fit m-2'>
+                    <LeaveRoomButton room_key={roomKey} socket={socket} />
                 </div>
-                <div className='w-[30%] space-y-2 pe-4'>
-                    <div className='w-full space-y-1 max-h-[50%]'>
-                        {roomUsers && <JoinedUsers roomUsers={roomUsers} room={room} />}
+                <div className='flex w-full max-h-full h-full space-x-4'>
+                    <div className='bg-black max-w-[70%] w-[70%] h-full'>
+                        {room && <RoomChat room={room} />}
                     </div>
-                    <div className='w-full'>
-                        <p>Hi</p>
+                    <div className='w-[30%] space-y-2 pe-4'>
+                        <div className='w-full space-y-1 max-h-[20%] overflow-y-auto'>
+                            {roomUsers && <JoinedUsers roomUsers={roomUsers} room={room} />}
+                        </div>
+                        <div className='w-full'>
+                            <p>Hi</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 

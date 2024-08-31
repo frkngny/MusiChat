@@ -23,7 +23,7 @@ export const PublicRooms = () => {
     }, []);
 
     return (
-        <div className='w-fit flex-grow max-h-screen p-2 m-2 outline-dashed outline-1'>
+        <div className='p-2 space-y-2'>
             <Each of={publicRooms} render={(item, index) =>
                 <RoomCard room={item} />
             } />

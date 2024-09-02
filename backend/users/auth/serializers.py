@@ -12,7 +12,6 @@ class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
         token['username'] = user.username
         token['email'] = user.email
-        token['image'] = str(user.image)
         return token
 
 class RegisterSerializer(serializers.ModelSerializer):

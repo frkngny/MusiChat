@@ -21,9 +21,9 @@ class Profile(models.Model):
     friends = models.ManyToManyField('self', null=True, blank=True)
 
 class UserFriendshipManager(models.Manager):
-    def invitations_received(self, receiver):
+    def requests_received(self, receiver):
         return UserFriendship.objects.filter(receiver=receiver, status='sent')
-    def invitations_sent(self, sender):
+    def requests_sent(self, sender):
         return UserFriendship.objects.filter(sender=sender, status='sent')
 
 class UserFriendship(models.Model):

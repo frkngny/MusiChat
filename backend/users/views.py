@@ -85,13 +85,11 @@ class FriendshipRequestsView(generics.ListAPIView):
         data = dict()
         direction = request.data.get('direction') if request.data.get('direction') else 'both'
         if direction == 'received' or direction == 'both':
-            queryset = UserFriendship.objects.invitations_received(profile)
-            result = list(map(lambda x: UserSerializer(x.sender.user).data, queryset))
-            data['received'] = result
+            queryset = UserFriendship.objects.requests_received(profile)
+            data['received'] = list(map(lambda x: UserSerializer(x.sender.user).data, queryset))
         if direction == 'sent' or direction == 'both':
-            queryset = UserFriendship.objects.invitations_sent(profile)
-            result = list(map(lambda x: UserSerializer(x.receiver.user).data, queryset))
-            data['sent'] = result
+            queryset = UserFriendship.objects.requests_sent(profile)
+            data['sent'] = list(map(lambda x: UserSerializer(x.receiver.user).data, queryset))
         if direction != 'both':
             data = list(data.values())[0]
             
@@ -107,7 +105,6 @@ class AnswerFriendshipRequestView(generics.UpdateAPIView):
         
         user_profile = Profile.objects.get(id=request.user.profile.id)
         
-        relation = None
         try:
             relation = get_object_or_404(UserFriendship, sender=sender_profile, receiver=user_profile)
             if answer == 'accept':
@@ -116,7 +113,6 @@ class AnswerFriendshipRequestView(generics.UpdateAPIView):
                     relation.save()
                 elif answer == 'reject':
                     relation.delete()
+            return JsonResponse({'success': 'Request is accepted', 'friendship': relation.status})
         except ObjectDoesNotExist:
-            return JsonResponse({'error': 'There is no request.'})
-        
-        return JsonResponse({'success': 'Request is accepted', 'friendship': relation.status})
+            return JsonResponse({'error': 'Friendship request is not found.'})

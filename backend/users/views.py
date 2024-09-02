@@ -79,12 +79,23 @@ class RemoveFriendView(generics.DestroyAPIView):
 
 class FriendshipRequestsView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
-    
     def get(self, request, *args, **kwargs):
         profile = Profile.objects.get(user=request.user)
-        queryset = UserFriendship.objects.invitations_received(profile)
-        result = list(map(lambda x: UserSerializer(x.sender.user).data, queryset))
-        return JsonResponse(result, safe=False)
+        
+        data = dict()
+        direction = request.data.get('direction') if request.data.get('direction') else 'both'
+        if direction == 'received' or direction == 'both':
+            queryset = UserFriendship.objects.invitations_received(profile)
+            result = list(map(lambda x: UserSerializer(x.sender.user).data, queryset))
+            data['received'] = result
+        if direction == 'sent' or direction == 'both':
+            queryset = UserFriendship.objects.invitations_sent(profile)
+            result = list(map(lambda x: UserSerializer(x.receiver.user).data, queryset))
+            data['sent'] = result
+        if direction != 'both':
+            data = list(data.values())[0]
+            
+        return JsonResponse(data, safe=False)
 
 class AnswerFriendshipRequestView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]

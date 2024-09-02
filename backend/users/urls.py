@@ -13,7 +13,7 @@ urlpatterns += [
     path('auth/', include('users.auth.urls')),
     path('user-messages', UserMessagesView.as_view(), name='user-messages'),
     path('send-friend-request', SendFriendshipView.as_view(), name='send-friend-request'),
-    path('remove-friend', RemoveFriendView.as_view(), name='remove-friend'),
-    path('received-friend-requests', FriendshipRequestsView.as_view(), name='received-friend-requests'),
+    path('friend-requests', FriendshipRequestsView.as_view(), name='friend-requests'),
     path('answer-friend-requests', AnswerFriendshipRequestView.as_view(), name='answer-friend-requests'),
+    path('remove-friend', RemoveFriendView.as_view(), name='remove-friend'),
 ]

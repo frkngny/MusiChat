@@ -56,7 +56,7 @@ class PublicRoomsView(ListAPIView):
     serializer_class = RoomSerializer
     
     def get_queryset(self):
-        return Room.objects.filter(is_public=True)
+        return Room.objects.filter(is_public=True).exclude(banned_users__in=[self.request.user])
 
 class JoinRoomView(UpdateAPIView):
     permission_classes = [IsAuthenticated]
@@ -107,15 +107,37 @@ class KickUserView(UpdateAPIView):
         send_room_users(room)
         
         return JsonResponse({'success': f'Kicked {user.username} from room.'})
+    
+class BanUnbanUserView(UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    
+    def put(self, request, *args, **kwargs):
+        room_key = request.data.get('key')
+        room = Room.objects.get(key=room_key)
+        
+        user_id = request.data.get('id')
+        user = get_user_model().objects.get(id=user_id)
+        
+        operation = request.data.get('operation')
+        if operation == 'ban':
+            room.banned_users.add(user)
+            room.joined_users.remove(user)
+        elif operation == 'unban':
+            room.banned_users.remove(user)
+            
+        send_room_users(room)
+        
+        return JsonResponse({'success': f'{operation.capitalize()}ned {user.username} for room.'})
 
 def send_room_users(room):
     channel_group_name = 'room_%s' % room.key
     channel_layer = get_channel_layer()
-    users = UserSerializer(room.joined_users, many=True).data
+    joined_users = UserSerializer(room.joined_users, many=True).data
+    banned_users = UserSerializer(room.banned_users, many=True).data
     async_to_sync(channel_layer.group_send)(
         channel_group_name,
         {
             'type': 'room_users',
-            'data': users
+            'data': {'joined': joined_users, 'banned': banned_users}
         }
     )

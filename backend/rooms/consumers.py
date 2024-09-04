@@ -8,8 +8,12 @@ from asgiref.sync import sync_to_async
 
 
 @sync_to_async
-def get_joined_users(room_key):
-    return UserSerializer(Room.objects.get(key=room_key).joined_users, many=True).data
+def get_room_users(room_key):
+    data = {
+        'joined': UserSerializer(Room.objects.get(key=room_key).joined_users, many=True).data,
+        'banned': UserSerializer(Room.objects.get(key=room_key).banned_users, many=True).data
+    }
+    return data
 
 class RoomConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -23,13 +27,13 @@ class RoomConsumer(AsyncWebsocketConsumer):
         
         await self.accept()
         
-        joined_users = await get_joined_users(self.room_key)
+        room_users = await get_room_users(self.room_key)
         
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': 'room_users',
-                'data': joined_users
+                'data': room_users
             }
         )
         

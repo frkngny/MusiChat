@@ -24,7 +24,6 @@ const NavBar = () => {
     const { pathname } = location;
 
     useEffect(() => {
-        console.log(pathname);
         navigationItems.forEach((item) => {
             if (item.href === pathname) item.current = true;
             else item.current = false;

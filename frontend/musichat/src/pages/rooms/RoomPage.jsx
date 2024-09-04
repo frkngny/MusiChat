@@ -3,11 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useAxios from '../../hooks/useAxios';
 import RoomChat from '../../components/rooms/RoomChat';
 import LeaveRoomButton from '../../components/rooms/LeaveRoomButton';
-import JoinedUsers from '../../components/rooms/JoinedUsers';
+import RoomUsers from '../../components/rooms/RoomUsers';
 import AuthContext from '../../context/AuthContext';
 import useSocket from '../../hooks/useSocket';
 import Swal from 'sweetalert2';
 import Layout from '../../components/Layout';
+import Carousel from '../../components/Carousel';
 
 
 const RoomPage = (props) => {
@@ -21,6 +22,7 @@ const RoomPage = (props) => {
     const [room, setRoom] = useState(null);
 
     const [roomUsers, setRoomUsers] = useState([]);
+    const [bannedUsers, setBannedUsers] = useState([]);
     const [socket, setSocket] = useState(null);
 
 
@@ -42,7 +44,6 @@ const RoomPage = (props) => {
         axios.put('/rooms/leave', formData);
     };
 
-
     // websocket
     if (socket === null) {
         setSocket(useSocket(`/room/${roomKey}`));
@@ -50,13 +51,15 @@ const RoomPage = (props) => {
         socket.onload = function (e) {
             const data = JSON.parse(e.data);
             if (data.type === 'room_users') {
-                setRoomUsers(data.data);
+                setRoomUsers(data.data.joined);
+                setBannedUsers(data.data.banned);
             }
         }
         socket.onmessage = function (e) {
             const data = JSON.parse(e.data);
             if (data.type === 'room_users') {
-                setRoomUsers(data.data);
+                setRoomUsers(data.data.joined);
+                setBannedUsers(data.data.banned);
             }
         }
         onbeforeunload = (event) => {
@@ -92,8 +95,16 @@ const RoomPage = (props) => {
                         {room && <RoomChat room={room} />}
                     </div>
                     <div className='w-[30%] space-y-2 pe-4'>
-                        <div className='w-full space-y-1 max-h-[20%] overflow-y-auto'>
-                            {roomUsers && <JoinedUsers roomUsers={roomUsers} room={room} />}
+                        <div className='w-full space-y-1 max-h-[30%] overflow-y-auto'>
+                            {   room &&
+                                room.host.id !== user.user_id ?
+                                    <RoomUsers roomUsers={roomUsers} room={room} title='Users' />
+                                    :
+                                    <Carousel>
+                                        <RoomUsers roomUsers={roomUsers} room={room} title='Users' />
+                                        <RoomUsers roomUsers={bannedUsers} room={room} title='Banned'/>
+                                    </Carousel>
+                            }
                         </div>
                         <div className='w-full'>
                             <p>Hi</p>

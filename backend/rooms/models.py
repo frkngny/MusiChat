@@ -20,7 +20,8 @@ class Room(models.Model):
     max_users = models.PositiveIntegerField(default=8, validators=[MaxValueValidator(8), MinValueValidator(1)])
     is_public = models.BooleanField(default=True)
     allow_messages = models.BooleanField(default=True)
-    joined_users = models.ManyToManyField(get_user_model(), related_name='in_room')
+    joined_users = models.ManyToManyField(get_user_model(), blank=True, related_name='in_room')
+    banned_users = models.ManyToManyField(get_user_model(), blank=True, related_name='banned_from')
     
     class Meta:
         ordering = ['-created_at']

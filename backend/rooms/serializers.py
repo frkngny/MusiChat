@@ -16,3 +16,21 @@ class CreateRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
         fields = ['max_users', 'is_public', 'allow_messages']
+
+class RoomSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Room
+        fields = ['max_users', 'is_public', 'allow_messages']
+        read_only_fields = ['key', 'host', 'created_at']
+    
+    def validate(self, attrs):
+        if len(attrs) == 0 or (len(attrs) == 1 and 'key' in attrs):
+            raise serializers.ValidationError('Nothing found to update.')
+        return super().validate(attrs)
+    
+    def update(self, instance, validated_data):
+        instance.max_users = validated_data.get('max_users', instance.max_users)
+        instance.is_public = validated_data.get('is_public', instance.is_public)
+        instance.allow_messages = validated_data.get('allow_messages', instance.allow_messages)
+        instance.save(update_fields=validated_data.keys())
+        return instance

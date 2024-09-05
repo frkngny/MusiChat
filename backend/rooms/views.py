@@ -2,11 +2,11 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 
-from rest_framework import status
+from rest_framework import status, views
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
-from .serializers import CreateRoomSerializer, RoomSerializer
+from .serializers import CreateRoomSerializer, RoomSerializer, RoomSettingsSerializer
 from .models import Room
 from users.serializers import UserSerializer
 
@@ -44,6 +44,41 @@ class CreateRoomView(CreateAPIView):
             room = Room.objects.create(host=self.request.user, **serializer.data)
             return JsonResponse(RoomSerializer(room).data, status=status.HTTP_201_CREATED)
         
+class GetRoomSettingsView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = RoomSettingsSerializer
+    lookup_field = 'key'
+    
+    def get(self, request, *args, **kwargs):
+        field = request.GET.get(self.lookup_field)
+        if field:
+            filter = {self.lookup_field: field}
+            queryset = Room.objects.filter(**filter)
+            if queryset.exists():
+                room = queryset[0]
+                return JsonResponse(self.serializer_class(room).data, status=status.HTTP_200_OK)
+        return JsonResponse({'message': f'Please provide "{self.lookup_field}".'}, status=status.HTTP_400_BAD_REQUEST)
+
+class UpdateRoomSettingsView(UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = RoomSettingsSerializer
+    lookup_field = 'key'
+    
+    def put(self, request, *args, **kwargs):
+        room_key = request.data.get(self.lookup_field)
+        serializer = self.serializer_class(data=request.data, partial=True)
+        
+        if not serializer.is_valid():
+            return JsonResponse({'error': 'Could not validate data.'})
+        
+        queryset = Room.objects.filter(key=room_key)
+        if not queryset.exists():
+            return JsonResponse({'error': f'Room not found with given key {room_key}'})
+        
+        room = queryset[0]
+        room = serializer.update(room, serializer._validated_data)
+        return JsonResponse({'success': f'Updated room setting ({room.key})', 'settings': RoomSettingsSerializer(room).data})
+    
 class MyRoomsView(ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = RoomSerializer

@@ -9,6 +9,7 @@ import useSocket from '../../hooks/useSocket';
 import Swal from 'sweetalert2';
 import Layout from '../../components/Layout';
 import Carousel from '../../components/Carousel';
+import RoomSettings from '../../components/rooms/RoomSettings';
 
 
 const RoomPage = (props) => {
@@ -95,17 +96,24 @@ const RoomPage = (props) => {
                         {room && <RoomChat room={room} />}
                     </div>
                     <div className='w-[30%] space-y-2 pe-4'>
-                        <div className='w-full space-y-1 max-h-[30%] overflow-y-auto'>
-                            {   room &&
+                        <div className='w-full space-y-1 max-h-[40%] overflow-y-auto'>
+                            {room &&
                                 room.host.id !== user.user_id ?
+                                <RoomUsers roomUsers={roomUsers} room={room} title='Users' />
+                                :
+                                <Carousel>
                                     <RoomUsers roomUsers={roomUsers} room={room} title='Users' />
-                                    :
-                                    <Carousel>
-                                        <RoomUsers roomUsers={roomUsers} room={room} title='Users' />
-                                        <RoomUsers roomUsers={bannedUsers} room={room} title='Banned'/>
-                                    </Carousel>
+                                    <RoomUsers roomUsers={bannedUsers} room={room} title='Banned' />
+                                </Carousel>
                             }
                         </div>
+                        {
+                            room &&
+                            room.host.id === user.user_id &&
+                            <div className='w-full space-y-2 max-h-fit border border-solid border-1 border-green-700 p-1'>
+                                <RoomSettings roomKey={roomKey} />
+                            </div>
+                        }
                         <div className='w-full'>
                             <p>Hi</p>
                         </div>

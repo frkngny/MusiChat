@@ -8,6 +8,8 @@ from chats.serializers import RoomChatSerializer
 class RoomSerializer(serializers.ModelSerializer):
     host = UserSerializer(read_only=True)
     chat = RoomChatSerializer(read_only=True, source='get_chat')
+    joined_users = UserSerializer(read_only=True, many=True)
+    banned_users = UserSerializer(read_only=True, many=True)
     class Meta:
         model = Room
         fields = '__all__'

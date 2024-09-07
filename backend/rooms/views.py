@@ -31,7 +31,7 @@ class RoomView(RetrieveAPIView):
             filter = {self.lookup_field: field}
             room = get_object_or_404(self.queryset, **filter)
             if room:
-                return JsonResponse(self.serializer_class(room).data, status=status.HTTP_200_OK)
+                return JsonResponse(self.serializer_class(room, context={'request': request}).data, status=status.HTTP_200_OK)
         return JsonResponse({'message': f'Please provide "{self.lookup_field}".'}, status=status.HTTP_400_BAD_REQUEST)
         
 class CreateRoomView(CreateAPIView):
@@ -77,6 +77,7 @@ class UpdateRoomSettingsView(UpdateAPIView):
         
         room = queryset[0]
         room = serializer.update(room, serializer._validated_data)
+        send_room(room, request)
         return JsonResponse({'success': f'Updated room setting ({room.key})', 'settings': RoomSettingsSerializer(room).data})
     
 class MyRoomsView(ListAPIView):
@@ -112,7 +113,7 @@ class JoinRoomView(UpdateAPIView):
             return JsonResponse({'error': f'You need to leave room {user_joined_rooms[0].key}'})
         
         room.joined_users.add(user)
-        send_room_users(room)
+        send_room(room, request)
         
         return JsonResponse({'success': f'Joined room {room.key}'})
 
@@ -125,7 +126,7 @@ class LeaveRoomView(UpdateAPIView):
         
         user = request.user
         room.joined_users.remove(user)
-        send_room_users(room)
+        send_room(room, request)
         
         return JsonResponse({'success': f'Joined room {room.key}'})
 
@@ -139,7 +140,7 @@ class KickUserView(UpdateAPIView):
         user_id = request.data.get('id')
         user = get_user_model().objects.get(id=user_id)
         room.joined_users.remove(user)
-        send_room_users(room)
+        send_room(room, request)
         
         return JsonResponse({'success': f'Kicked {user.username} from room.'})
     
@@ -160,15 +161,28 @@ class BanUnbanUserView(UpdateAPIView):
         elif operation == 'unban':
             room.banned_users.remove(user)
             
-        send_room_users(room)
+        send_room(room, request)
         
         return JsonResponse({'success': f'{operation.capitalize()}ned {user.username} for room.'})
 
-def send_room_users(room):
+
+def send_room(room, request):
     channel_group_name = 'room_%s' % room.key
     channel_layer = get_channel_layer()
-    joined_users = UserSerializer(room.joined_users, many=True).data
-    banned_users = UserSerializer(room.banned_users, many=True).data
+    serialized_room = RoomSerializer(room, context={'request': request}).data
+    async_to_sync(channel_layer.group_send)(
+        channel_group_name,
+        {
+            'type': 'room',
+            'data': serialized_room
+        }
+    )
+
+def send_room_users(room, request):
+    channel_group_name = 'room_%s' % room.key
+    channel_layer = get_channel_layer()
+    joined_users = UserSerializer(room.joined_users, many=True, context={'request': request}).data
+    banned_users = UserSerializer(room.banned_users, many=True, context={'request': request}).data
     async_to_sync(channel_layer.group_send)(
         channel_group_name,
         {

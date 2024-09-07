@@ -4,7 +4,7 @@ import { ProtectedRoutes } from "./utils/ProtectedRoutes.jsx";
 
 import MainPage from './pages/MainPage';
 import HomePage from './pages/HomePage';
-import RoomPage from './pages/rooms/RoomPage';
+import RoomPage from './pages/RoomPage';
 import React from 'react';
 import './App.css'
 

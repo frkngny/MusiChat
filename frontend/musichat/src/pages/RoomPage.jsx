@@ -1,14 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
-import useAxios from '../../hooks/useAxios';
-import RoomChat from '../../components/rooms/RoomChat';
-import LeaveRoomButton from '../../components/rooms/LeaveRoomButton';
-import RoomUsers from '../../components/rooms/RoomUsers';
-import AuthContext from '../../context/AuthContext';
-import useSocket from '../../hooks/useSocket';
+import useAxios from '../hooks/useAxios';
+import RoomChat from '../components/rooms/RoomChat';
+import LeaveRoomButton from '../components/rooms/LeaveRoomButton';
+import RoomUsers from '../components/rooms/RoomUsers';
+import AuthContext from '../context/AuthContext';
+import useSocket from '../hooks/useSocket';
 import Swal from 'sweetalert2';
-import Carousel from '../../components/Carousel';
-import RoomSettings from '../../components/rooms/RoomSettings';
+import Carousel from '../components/Carousel';
+import RoomSettings from '../components/rooms/RoomSettings';
 
 
 const RoomPage = (props) => {
@@ -23,6 +23,7 @@ const RoomPage = (props) => {
 
     const [roomUsers, setRoomUsers] = useState([]);
     const [bannedUsers, setBannedUsers] = useState([]);
+    const [roomSettings, setRoomSettings] = useState({})
     const [socket, setSocket] = useState(null);
 
     useEffect(() => async function () {
@@ -36,23 +37,32 @@ const RoomPage = (props) => {
         }
     }, []);
 
+    // when room is updated, update related variables
+    useEffect(() => {
+        if (room) {
+            setRoomUsers(room.joined_users);
+            setBannedUsers(room.banned_users);
+            setRoomSettings({
+                max_users: room.max_users,
+                is_public: room.is_public,
+                allow_messages: room.allow_messages
+            });
+        }
+    }, [room]);
+
     // websocket
     useEffect(() => {
         if (socket === null) {
             setSocket(useSocket(`/room/${roomKey}`));
         } else {
-            socket.onload = function (e) {
-                const data = JSON.parse(e.data);
-                if (data.type === 'room_users') {
-                    setRoomUsers(data.data.joined);
-                    setBannedUsers(data.data.banned);
-                }
-            }
             socket.onmessage = function (e) {
                 const data = JSON.parse(e.data);
-                if (data.type === 'room_users') {
-                    setRoomUsers(data.data.joined);
-                    setBannedUsers(data.data.banned);
+                // if (data.type === 'room_users') {
+                //     setRoomUsers(data.data.joined);
+                //     setBannedUsers(data.data.banned);
+                // }
+                if (data.type === 'room') {
+                    setRoom(data.data);
                 }
             }
             onbeforeunload = (event) => {
@@ -112,7 +122,7 @@ const RoomPage = (props) => {
                             room &&
                             room.host.id === user.user_id &&
                             <div className='w-full space-y-2 max-h-fit border border-solid border-1 border-green-700 p-1'>
-                                <RoomSettings roomKey={roomKey} />
+                                <RoomSettings roomKey={roomKey} settings={roomSettings} />
                             </div>
                         }
                         <div className='w-full'>

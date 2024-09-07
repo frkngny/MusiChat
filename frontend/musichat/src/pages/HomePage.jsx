@@ -2,18 +2,17 @@ import { useState } from "react";
 import { PublicRooms } from "../components/homepage/PublicRooms";
 import RoomCreate from "../components/rooms/RoomCreate";
 
-const HomePage = () => {
+const HomePage = (props) => {
+    const { userObject } = props
+    
     const [openCreateRoomModal, setOpenCreateRoomModal] = useState(false);
-
-    const openRoomCreateModal = () => setOpenCreateRoomModal(true);
-    const closeRoomCreateModal = () => setOpenCreateRoomModal(false);
 
     return (
         <div>
-            <button onClick={() => openRoomCreateModal()}>Create Room</button>
+            <button onClick={() => setOpenCreateRoomModal(true)}>Create Room</button>
             {
                 openCreateRoomModal &&
-                <RoomCreate open={openCreateRoomModal} closeCallback={() => closeRoomCreateModal()} />
+                <RoomCreate open={openCreateRoomModal} closeCallback={() => setOpenCreateRoomModal(false)} />
             }
 
             <div className='w-fit flex-1 m-2 outline-dashed outline-1 upto-bottom overflow-y-auto '>

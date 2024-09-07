@@ -5,8 +5,8 @@ import { Cog8ToothIcon } from '@heroicons/react/24/outline';
 
 const RoomSettings = (props) => {
     const axios = useAxios();
-    const { roomKey } = props;
-    const [roomSettings, setRoomSettings] = useState(null);
+    const { roomKey, settings } = props;
+    
     const [editOn, setEditOn] = useState(false);
     const [maxusersErrorMessage, setMaxusersErrorMessage] = useState([]);
 
@@ -18,13 +18,6 @@ const RoomSettings = (props) => {
         { name: 'is_public', type: 'checkbox', label: 'Is Public:' },
         { name: 'allow_messages', type: 'checkbox', label: 'Allow Messages:' }
     ]
-
-    useEffect(() => {
-        axios.get('/rooms/room/settings', { params: { key: roomKey } }).then((resp) => {
-            const response = resp.data;
-            setRoomSettings(response);
-        });
-    }, [roomKey]);
 
     const handeSettingsUpdate = (e) => {
         e.preventDefault();
@@ -44,7 +37,6 @@ const RoomSettings = (props) => {
                 setMaxusersErrorMessage(resp.data.error);
             } else {
                 setMaxusersErrorMessage(null);
-                setRoomSettings(resp.data.settings);
                 setEditOn(false);
             }
         });
@@ -65,7 +57,7 @@ const RoomSettings = (props) => {
                 </button>
             </div>
             {!editOn ?
-                roomSettings &&
+                settings &&
                 <div>
                     <Each of={formProps} render={(item, index) =>
                         <div className='mt-2'>
@@ -76,8 +68,8 @@ const RoomSettings = (props) => {
                                 id={item.name + "-val"}
                                 type={item.type}
                                 className={item.type === 'text' ? textInputClassName : ""}
-                                value={roomSettings[item.name]}
-                                checked={roomSettings[item.name]}
+                                value={settings[item.name] ? settings[item.name] : false}
+                                checked={settings[item.name] ? settings[item.name] : false}
                                 contentEditable={false}
                                 readOnly={true}
                             />
@@ -85,7 +77,7 @@ const RoomSettings = (props) => {
                     } />
                 </div>
                 :
-                roomSettings &&
+                settings &&
                 <form onSubmit={handeSettingsUpdate} >
                     <Each of={formProps} render={(item, index) =>
                         <div className='mt-2' key={item.name}>
@@ -97,8 +89,8 @@ const RoomSettings = (props) => {
                                 name={item.name}
                                 type={item.type}
                                 className={item.type === 'text' ? textInputClassName : ""}
-                                defaultValue={roomSettings[item.name]}
-                                defaultChecked={roomSettings[item.name]}
+                                defaultValue={settings[item.name] ? settings[item.name] : false}
+                                defaultChecked={settings[item.name] ? settings[item.name] : false}
                             />
                             {item.errorState &&
                                 <ul id={item.name + "-form-error"} className={item.errorState !== "" ? errorStateClassName : ""}>

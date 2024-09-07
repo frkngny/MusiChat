@@ -87,7 +87,6 @@ export const AuthProvider = ({ children }) => {
             loginUser(username, password);
         } else{
             const error = await response.json();
-            console.log(error);
             
             Swal.fire({
                 title: "error occured",

@@ -6,8 +6,8 @@ import def_img from '../assets/default.jpg';
 import { useLocation } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 
-const NavBar = () => {
-
+const NavBar = (props) => {
+    const { userObject } = props;
     const { user, logoutUser } = useContext(AuthContext);
 
     const navigationItems = [
@@ -77,7 +77,7 @@ const NavBar = () => {
                                 <span className="sr-only">Open user menu</span>
                                 <img
                                     alt="User Image"
-                                    src={def_img}
+                                    src={userObject ? userObject.profile.image : def_img}
                                     className="h-8 w-8 rounded-full"
                                 />
                             </MenuButton>
@@ -86,9 +86,9 @@ const NavBar = () => {
                                 transition
                                 className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
                             >
-                                <div className='text-xs'>
-                                    <p>Username</p>
-                                    <p>usermail</p>
+                                <div className='text-xs m-1 justify-center'>
+                                    <p className='font-bold'>{userObject ? userObject.username : user.username}</p>
+                                    <p>{userObject ? userObject.email : user.email}</p>
                                 </div>
                                 <hr />
                                 <Each of={dropdownItems} render={(item, index) =>

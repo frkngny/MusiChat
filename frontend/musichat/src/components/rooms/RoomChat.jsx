@@ -7,7 +7,7 @@ import useSocket from '../../hooks/useSocket';
 
 const RoomChat = (props) => {
     const { room, ...others } = props
-    
+
     const axios = useAxios();
     const { user } = useContext(AuthContext);
 
@@ -17,7 +17,7 @@ const RoomChat = (props) => {
     const [chatDisabled, setChatDisabled] = useState(true);
 
     useEffect(() => {
-        if(room.allow_messages || user.user_id === room.host.id) {
+        if (room.allow_messages || user.user_id === room.host.id) {
             setChatDisabled(false);
         } else {
             setChatDisabled(true);
@@ -44,7 +44,7 @@ const RoomChat = (props) => {
                 setMessages([...messages, data.message]);
             }
         }
-        onbeforeunload = (event) => { 
+        onbeforeunload = (event) => {
             socket.close();
         }
     }
@@ -59,15 +59,17 @@ const RoomChat = (props) => {
     // send message
     const sendMessage = async (e) => {
         e.preventDefault();
-        const messageForm = new FormData();
-        let text = e.target.messageText.value;
-        if (text !== "") {
-            messageForm.append('chat', chat.id)
-            messageForm.append('text', text);
-            messageForm.append('sender', user.user_id);
-            await axios.post('/chats/chat/send-message', messageForm);
+        if (!chatDisabled) {
+            const messageForm = new FormData();
+            let text = e.target.messageText.value;
+            if (text !== "") {
+                messageForm.append('chat', chat.id)
+                messageForm.append('text', text);
+                messageForm.append('sender', user.user_id);
+                await axios.post('/chats/chat/send-message', messageForm);
+            }
+            e.target.messageText.value = "";
         }
-        e.target.messageText.value = "";
     }
 
     return (
@@ -87,7 +89,7 @@ const RoomChat = (props) => {
             </div>
             <div className='w-full m-auto'>
                 <form onSubmit={sendMessage}>
-                    <input type='text' className='rounded-md p-2 w-[90%]' id='message-text' name='messageText' disabled={chatDisabled}/>
+                    <input type='text' className='rounded-md p-2 w-[90%]' id='message-text' name='messageText' disabled={chatDisabled} />
                     <button type='submit' className='text-white shadow-inner shadow-white hover:bg-green-700 w-[8%] h-8 ms-2' disabled={chatDisabled}>Send</button>
                 </form>
             </div>

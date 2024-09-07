@@ -26,8 +26,21 @@ class CurrentUserView(generics.ListAPIView):
     serializer_class = UserSerializer
     
     def get(self, request, format=None):
-        return JsonResponse(self.serializer_class(request.user).data)
-
+        return JsonResponse(self.serializer_class(request.user, context={'request': request}).data)
+    
+class UserProfileView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ProfileSerializer
+    lookup_field = 'user'
+    
+    def get(self, request, *args, **kwargs):
+        user_id = request.GET.get(self.lookup_field)
+        profile_queryset = Profile.objects.filter(user=user_id)
+        if profile_queryset.exists():
+            return JsonResponse({'profile': self.serializer_class(profile_queryset[0], context={'request': request}).data})
+        return JsonResponse({'error': 'Profile not found'})
+    
+    
 class UserMessagesView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     user_serializer_class = UserSerializer
@@ -42,7 +55,7 @@ class UserMessagesView(generics.ListAPIView):
         user = get_user_model().objects.get(pk=field)
         messages = Message.objects.filter(sender=user)
         
-        return JsonResponse({'user': self.user_serializer_class(user).data, 'messages': self.message_serializer_class(messages, many=True).data}, safe=False)
+        return JsonResponse({'user': self.user_serializer_class(user, context={'request': request}).data, 'messages': self.message_serializer_class(messages, many=True).data}, safe=False)
 
 ########################################################
 ######### Friendship

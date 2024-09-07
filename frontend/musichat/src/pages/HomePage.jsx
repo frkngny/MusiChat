@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PublicRooms } from "../components/rooms/PublicRooms";
+import { PublicRooms } from "../components/homepage/PublicRooms";
 import RoomCreate from "../components/rooms/RoomCreate";
 
 const HomePage = () => {

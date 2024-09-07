@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useAxios from '../../hooks/useAxios'
 import { Each } from '../Each';
 import { Cog8ToothIcon } from '@heroicons/react/24/outline';
@@ -19,12 +19,12 @@ const RoomSettings = (props) => {
         { name: 'allow_messages', type: 'checkbox', label: 'Allow Messages:' }
     ]
 
-    onpageshow = (e) => {
+    useEffect(() => {
         axios.get('/rooms/room/settings', { params: { key: roomKey } }).then((resp) => {
             const response = resp.data;
             setRoomSettings(response);
         });
-    }
+    }, [roomKey]);
 
     const handeSettingsUpdate = (e) => {
         e.preventDefault();
@@ -48,19 +48,20 @@ const RoomSettings = (props) => {
                 setEditOn(false);
             }
         });
-
     };
+
     const handleFormCancel = (e) => {
         e.preventDefault();
         setMaxusersErrorMessage(null);
         setEditOn(false);
     }
+
     return (
         <>
             <div className='flex justify-between mx-2'>
                 <h4>Settings</h4>
-                <button className='text-black p-1' onClick={() => setEditOn(true)}>
-                    <Cog8ToothIcon aria-hidden="true" className="block h-4 w-4 group-data-[open]:hidden"/>
+                <button className='text-black p-1' onClick={() => setEditOn(!editOn)}>
+                    <Cog8ToothIcon aria-hidden="true" className="block h-4 w-4 group-data-[open]:hidden" />
                 </button>
             </div>
             {!editOn ?
@@ -77,15 +78,17 @@ const RoomSettings = (props) => {
                                 className={item.type === 'text' ? textInputClassName : ""}
                                 value={roomSettings[item.name]}
                                 checked={roomSettings[item.name]}
-                                contentEditable={editOn}
+                                contentEditable={false}
+                                readOnly={true}
                             />
                         </div>
                     } />
                 </div>
                 :
+                roomSettings &&
                 <form onSubmit={handeSettingsUpdate} >
                     <Each of={formProps} render={(item, index) =>
-                        <div className='mt-2'>
+                        <div className='mt-2' key={item.name}>
                             <label htmlFor={item.name + "-form"} className={labelClassName}>
                                 {item.label}
                             </label>{" "}

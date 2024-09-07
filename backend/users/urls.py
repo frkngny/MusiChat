@@ -1,7 +1,7 @@
 from rest_framework import routers
 from django.urls import path, include
 
-from .views import CurrentUserView, UserMessagesView, SendFriendshipView, RemoveFriendView, FriendshipRequestsView, AnswerFriendshipRequestView
+from .views import CurrentUserView, UserMessagesView, SendFriendshipView, RemoveFriendView, FriendshipRequestsView, AnswerFriendshipRequestView, UserProfileView
 
 router = routers.DefaultRouter()
 router.root_view_name = 'Users'
@@ -10,6 +10,7 @@ urlpatterns = router.urls
 
 urlpatterns += [
     path('currentuser', CurrentUserView.as_view(), name='current_user'),
+    path('profile', UserProfileView.as_view(), name='user_profile'),
     path('auth/', include('users.auth.urls')),
     path('user-messages', UserMessagesView.as_view(), name='user-messages'),
     path('send-friend-request', SendFriendshipView.as_view(), name='send-friend-request'),

@@ -7,7 +7,6 @@ import RoomUsers from '../../components/rooms/RoomUsers';
 import AuthContext from '../../context/AuthContext';
 import useSocket from '../../hooks/useSocket';
 import Swal from 'sweetalert2';
-import Layout from '../../components/Layout';
 import Carousel from '../../components/Carousel';
 import RoomSettings from '../../components/rooms/RoomSettings';
 
@@ -26,8 +25,7 @@ const RoomPage = (props) => {
     const [bannedUsers, setBannedUsers] = useState([]);
     const [socket, setSocket] = useState(null);
 
-
-    useEffect(() => {
+    useEffect(() => async function () {
         try {
             axios.get('/rooms/room', { params: { key: roomKey } })
                 .then((resp) => {
@@ -36,47 +34,43 @@ const RoomPage = (props) => {
         } catch (error) {
             console.log(error)
         }
-    }, [])
-
-    onpagehide = (e) => {
-        e.preventDefault();
-        const formData = new FormData();
-        formData.append('room_key', roomKey);
-        axios.put('/rooms/leave', formData);
-    };
+    }, []);
 
     // websocket
-    if (socket === null) {
-        setSocket(useSocket(`/room/${roomKey}`));
-    } else {
-        socket.onload = function (e) {
-            const data = JSON.parse(e.data);
-            if (data.type === 'room_users') {
-                setRoomUsers(data.data.joined);
-                setBannedUsers(data.data.banned);
+    useEffect(() => {
+        if (socket === null) {
+            setSocket(useSocket(`/room/${roomKey}`));
+        } else {
+            socket.onload = function (e) {
+                const data = JSON.parse(e.data);
+                if (data.type === 'room_users') {
+                    setRoomUsers(data.data.joined);
+                    setBannedUsers(data.data.banned);
+                }
+            }
+            socket.onmessage = function (e) {
+                const data = JSON.parse(e.data);
+                if (data.type === 'room_users') {
+                    setRoomUsers(data.data.joined);
+                    setBannedUsers(data.data.banned);
+                }
+            }
+            onbeforeunload = (event) => {
+                socket.close();
             }
         }
-        socket.onmessage = function (e) {
-            const data = JSON.parse(e.data);
-            if (data.type === 'room_users') {
-                setRoomUsers(data.data.joined);
-                setBannedUsers(data.data.banned);
-            }
-        }
-        onbeforeunload = (event) => {
-            socket.close();
-        }
-    }
+    }, [socket])
 
     useEffect(() => {
         if (roomUsers.length > 0) {
+            // if user is kicked
             if (roomUsers && !roomUsers.find(u => u.id === user.user_id)) {
                 navigate('/home');
                 Swal.fire({
                     title: `You are kicked from ${roomKey}.`,
                     icon: "error",
                     toast: true,
-                    timer: 3000,
+                    timer: 2000,
                     position: 'bottom-right',
                     timerProgressBar: true,
                     showConfirmButton: false,
@@ -84,6 +78,13 @@ const RoomPage = (props) => {
             }
         }
     }, [roomUsers]);
+
+    onpagehide = (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('room_key', roomKey);
+        axios.put('/rooms/leave', formData);
+    };
 
     return (
         <>
@@ -99,11 +100,11 @@ const RoomPage = (props) => {
                         <div className='w-full space-y-1 max-h-[40%] overflow-y-auto'>
                             {room &&
                                 room.host.id !== user.user_id ?
-                                <RoomUsers roomUsers={roomUsers} room={room} title='Users' />
+                                <RoomUsers roomUsers={roomUsers} room={room} user={user} title='Users' />
                                 :
                                 <Carousel>
-                                    <RoomUsers roomUsers={roomUsers} room={room} title='Users' />
-                                    <RoomUsers roomUsers={bannedUsers} room={room} title='Banned' />
+                                    <RoomUsers roomUsers={roomUsers} room={room} user={user} title='Users' />
+                                    <RoomUsers roomUsers={bannedUsers} room={room} user={user} title='Banned' />
                                 </Carousel>
                             }
                         </div>

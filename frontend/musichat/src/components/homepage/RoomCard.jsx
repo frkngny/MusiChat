@@ -5,8 +5,8 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import React, { useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
-import JoinRoomButton from './JoinRoomButton';
-import LeaveRoomButton from './LeaveRoomButton';
+import JoinRoomButton from '../rooms/JoinRoomButton';
+import LeaveRoomButton from '../rooms/LeaveRoomButton';
 import AuthContext from '../../context/AuthContext';
 
 const RoomCard = (props) => {

@@ -1,15 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React from 'react'
 import { Each } from '../Each';
-import AuthContext from '../../context/AuthContext';
 import useAxios from '../../hooks/useAxios';
 
 import banIcon from '../../assets/icons/banIcon.png'
 import kickIcon from '../../assets/icons/kickIcon.png'
 
 const JoinedUsers = (props) => {
-    const { roomUsers, room, title, ...others } = props;
-
-    const { user } = useContext(AuthContext);
+    const { roomUsers, room, title, user, ...others } = props;
 
     const axios = useAxios();
 

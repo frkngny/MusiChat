@@ -17,7 +17,7 @@ class AppUser(AbstractUser):
 
 class Profile(models.Model):
     user = models.OneToOneField(AppUser, on_delete=models.CASCADE, related_name='profile')
-    image = models.ImageField(default='default.jpg', upload_to='profile_photos', null=True, blank=True)
+    image = models.ImageField(default='profile_photos/default.jpg', upload_to='profile_photos', null=True, blank=True)
     friends = models.ManyToManyField('self', blank=True)
 
 class UserFriendshipManager(models.Manager):

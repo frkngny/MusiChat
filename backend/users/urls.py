@@ -9,7 +9,7 @@ router.root_view_name = 'Users'
 urlpatterns = router.urls
 
 urlpatterns += [
-    path('currentuser', CurrentUserView.as_view(), name='current_user'),
+    path('me', CurrentUserView.as_view(), name='me'),
     path('profile', UserProfileView.as_view(), name='user_profile'),
     path('auth/', include('users.auth.urls')),
     path('user-messages', UserMessagesView.as_view(), name='user-messages'),

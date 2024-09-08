@@ -11,7 +11,7 @@ export function ProtectedRoutes() {
     const axios = useAxios();
     
     useLayoutEffect(() => {
-        axios.get('/users/currentuser').then((resp) => {
+        axios.get('/users/me').then((resp) => {
             setUserObject(resp.data);
         });
     }, []);

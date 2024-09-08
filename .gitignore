@@ -10,6 +10,10 @@ migrations/
 media/
 
 
+
+# REACT
+.env.*
+
 # Logs
 logs
 *.log

@@ -2,9 +2,7 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import React, { useContext } from 'react'
-import { useNavigate } from 'react-router-dom';
 import JoinRoomButton from '../rooms/JoinRoomButton';
 import LeaveRoomButton from '../rooms/LeaveRoomButton';
 import AuthContext from '../../context/AuthContext';
@@ -32,7 +30,7 @@ const RoomCard = (props) => {
             <CardActions sx={{ maxWidth: 'full', maxHeight: '20%' }}>
                 <JoinRoomButton roomKey={room.key} />
                 {
-                    room.joined_users.includes(user.user_id) &&
+                    room.joined_users.find(u => u.id === user.user_id) &&
                     <LeaveRoomButton room_key={room.key} onCardClick={leaveRoomCallback} />
                 }
                 <span className='font-light justify-self-end'>{room.joined_users.length} / {room.max_users}</span>

@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import VerifyToken from "../utils/VerifyToken.jsx";
 import Swal from "sweetalert2";
 
-//require('dotenv').config()
-const baseURL = "http://127.0.0.1:8000";
+const baseURL = process.env.BACKEND_BASE_URL;
 
 const AuthContext = createContext();
 export default AuthContext;

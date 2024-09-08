@@ -21,7 +21,7 @@ const useAxios = () => {
 
         const response = await axios.post(`/users/auth/token-refresh`, {
             refresh: authTokens.refresh,
-            headers: {Authorization: `Bearer ${authTokens.access}`}
+            headers: { Authorization: `Bearer ${authTokens.access}` }
         });
         localStorage.setItem("authTokens", JSON.stringify(response.data));
         setAuthTokens(response.data);

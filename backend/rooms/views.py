@@ -128,7 +128,7 @@ class LeaveRoomView(UpdateAPIView):
         room.joined_users.remove(user)
         send_room(room, request)
         
-        return JsonResponse({'success': f'Joined room {room.key}'})
+        return JsonResponse({'success': f'Left room {room.key}'})
 
 class KickUserView(UpdateAPIView):
     permission_classes = [IsAuthenticated]

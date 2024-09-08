@@ -60,6 +60,14 @@ class UserMessagesView(generics.ListAPIView):
 ########################################################
 ######### Friendship
 ########################################################
+class UserFriendsView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserSerializer
+    
+    def get(self, request, *args, **kwargs):
+        friends = self.serializer_class(request.user.profile.friends, many=True, context={'request': request})
+        return JsonResponse({'success': True, 'friends': friends.data})
+
 class SendFriendshipView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     
@@ -111,7 +119,7 @@ class FriendshipRequestsView(generics.ListAPIView):
 class AnswerFriendshipRequestView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     
-    def post(self, request, *args, **kwargs):
+    def put(self, request, *args, **kwargs):
         answer = request.data.get('answer')
         sender_user_id = request.data.get('sender_user_id')
         sender_profile = Profile.objects.get(user=sender_user_id)

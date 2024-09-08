@@ -14,11 +14,11 @@ const LeaveRoomButton = (props) => {
     const handleLeave = () => {
         axios.put('/rooms/leave', formData).then((resp) => {
             if (Object.keys(resp.data).includes('success')) {
+                if (onCardClick) { onCardClick(); }
+                if (socket) { socket.close(); }
                 navigate(`/home`);
             }
         });
-        if (onCardClick) { onCardClick(); }
-        if (socket) { socket.close(); }
     }
 
     return (

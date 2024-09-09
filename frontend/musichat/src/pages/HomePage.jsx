@@ -20,7 +20,7 @@ const HomePage = (props) => {
                 <div className='sticky top-0 bg-gray-800 text-white text-center'>Public rooms</div>
                 <PublicRooms />
             </div>
-            <div className='max-w-fit flex-1 m-2 p-1 outline-dashed outline-1 upto-bottom overflow-y-auto'>
+            <div className='max-w-fit h-[40%] flex-1 m-2 p-1 outline-dashed outline-1 upto-bottom overflow-y-auto space-y-1'>
                 <div className='sticky top-0 bg-gray-800 text-white text-center'>Friends</div>
                 <UserFriends />
             </div>

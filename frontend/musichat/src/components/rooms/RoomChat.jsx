@@ -6,10 +6,9 @@ import { MessageLeft, MessageRight } from '../chat/Message';
 import useSocket from '../../hooks/useSocket';
 
 const RoomChat = (props) => {
-    const { room, ...others } = props
+    const { room, user, ...others } = props
 
     const axios = useAxios();
-    const { user } = useContext(AuthContext);
 
     const [chat, setChat] = useState(null);
     const [messages, setMessages] = useState([]);
@@ -17,7 +16,7 @@ const RoomChat = (props) => {
     const [chatDisabled, setChatDisabled] = useState(true);
 
     useEffect(() => {
-        if (room.allow_messages || user.user_id === room.host.id) {
+        if (room.allow_messages || user.id === room.host.id) {
             setChatDisabled(false);
         } else {
             setChatDisabled(true);
@@ -65,7 +64,7 @@ const RoomChat = (props) => {
             if (text !== "") {
                 messageForm.append('chat', chat.id)
                 messageForm.append('text', text);
-                messageForm.append('sender', user.user_id);
+                messageForm.append('sender', user.id);
                 await axios.post('/chats/chat/send-message', messageForm);
             }
             e.target.messageText.value = "";
@@ -73,8 +72,8 @@ const RoomChat = (props) => {
     }
 
     return (
-        <div className='h-full max-h-[90%] ms-2'>
-            <div className='m-1  bg-green-900 rounded-r-xl max-h-[90%] mb-2 overflow-y-auto h-[88%]'>
+        <div className='h-full ms-2'>
+            <div className='m-1 mb-2 bg-green-900 rounded-r-xl max-h-[90%] overflow-y-auto'>
                 <div className='flex flex-col overflow-y-hidden space-y-1 mb-2' ref={messageViewRef}>
                     {
                         messages &&

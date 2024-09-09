@@ -31,7 +31,7 @@ const RoomCard = (props) => {
                 <JoinRoomButton roomKey={room.key} />
                 {
                     room.joined_users.find(u => u.id === user.user_id) &&
-                    <LeaveRoomButton room_key={room.key} onCardClick={leaveRoomCallback} />
+                    <LeaveRoomButton roomKey={room.key} onCardClick={leaveRoomCallback} />
                 }
                 <span className='font-light justify-self-end'>{room.joined_users.length} / {room.max_users}</span>
             </CardActions>

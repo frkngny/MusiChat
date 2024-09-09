@@ -38,7 +38,7 @@ const JoinedUsers = (props) => {
                         <p>{roomUser.id}</p>
                     </div>
                     {
-                        user.user_id === room.host.id &&
+                        user.id === room.host.id &&
                         room.host.id !== roomUser.id &&
                         (
                             title === 'Users' ?

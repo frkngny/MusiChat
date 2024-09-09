@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import useAxios from '../hooks/useAxios';
 import RoomChat from '../components/rooms/RoomChat';
 import LeaveRoomButton from '../components/rooms/LeaveRoomButton';
@@ -12,13 +12,13 @@ import RoomSettings from '../components/rooms/RoomSettings';
 
 
 const RoomPage = (props) => {
+    const [userObject] = useOutletContext();
     const axios = useAxios();
     const navigate = useNavigate();
 
     const params = useParams();
     const roomKey = params.roomKey;
 
-    const { user } = useContext(AuthContext);
     const [room, setRoom] = useState(null);
 
     const [roomUsers, setRoomUsers] = useState([]);
@@ -57,10 +57,6 @@ const RoomPage = (props) => {
         } else {
             socket.onmessage = function (e) {
                 const data = JSON.parse(e.data);
-                // if (data.type === 'room_users') {
-                //     setRoomUsers(data.data.joined);
-                //     setBannedUsers(data.data.banned);
-                // }
                 if (data.type === 'room') {
                     setRoom(data.data);
                 }
@@ -74,7 +70,7 @@ const RoomPage = (props) => {
     useEffect(() => {
         if (roomUsers.length > 0) {
             // if user is kicked
-            if (roomUsers && !roomUsers.find(u => u.id === user.user_id)) {
+            if (roomUsers && !roomUsers.find(u => u.id === userObject.id)) {
                 navigate('/home');
                 Swal.fire({
                     title: `You are kicked from ${roomKey}.`,
@@ -101,24 +97,24 @@ const RoomPage = (props) => {
                     <LeaveRoomButton roomKey={roomKey} socket={socket} />
                 </div>
                 <div className='flex w-full max-h-full h-full space-x-4'>
-                    <div className='bg-black max-w-[70%] w-[70%] h-full'>
-                        {room && <RoomChat room={room} />}
+                    <div className='bg-black max-w-[70%] w-[70%] h-full upto-bottom'>
+                        {room && <RoomChat room={room} user={userObject} />}
                     </div>
                     <div className='w-[30%] space-y-2 pe-4'>
                         <div className='w-full space-y-1 max-h-[40%] overflow-y-auto'>
                             {room &&
-                                room.host.id !== user.user_id ?
-                                <RoomUsers roomUsers={roomUsers} room={room} user={user} title='Users' />
+                                room.host.id !== userObject.id ?
+                                <RoomUsers roomUsers={roomUsers} room={room} user={userObject} title='Users' />
                                 :
                                 <Carousel>
-                                    <RoomUsers roomUsers={roomUsers} room={room} user={user} title='Users' />
-                                    <RoomUsers roomUsers={bannedUsers} room={room} user={user} title='Banned' />
+                                    <RoomUsers roomUsers={roomUsers} room={room} user={userObject} title='Users' />
+                                    <RoomUsers roomUsers={bannedUsers} room={room} user={userObject} title='Banned' />
                                 </Carousel>
                             }
                         </div>
                         {
                             room &&
-                            room.host.id === user.user_id &&
+                            room.host.id === userObject.id &&
                             <div className='w-full space-y-2 max-h-fit border border-solid border-1 border-green-700 p-1'>
                                 <RoomSettings roomKey={roomKey} settings={roomSettings} />
                             </div>

@@ -4,10 +4,9 @@ import { Modal, Box } from '@mui/material';
 import AuthContext from '../../context/AuthContext';
 import { Each } from '../Each';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const RoomCreate = (props) => {
-
-    const { user } = useContext(AuthContext);
     const { open, closeCallback } = props
 
     const [maxusersErrorMessage, setMaxusersErrorMessage] = useState([]);
@@ -34,11 +33,20 @@ const RoomCreate = (props) => {
     const fetchData = async (formOptions) => {
         try {
             const resp = await axios.post('/rooms/create', formOptions);
-            console.log(resp);
             navigate(`/room/${resp.data.key}`);
-            closeCallback();
         } catch (error) {
-            console.log(error);
+            console.log(error.response.data);
+            Swal.fire({
+                title: error.response.data.error,
+                icon: "error",
+                toast: true,
+                timer: 3000,
+                position: 'bottom-right',
+                timerProgressBar: true,
+                showConfirmButton: false,
+            });
+        } finally {
+            closeCallback();
         }
     }
 

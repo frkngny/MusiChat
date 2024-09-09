@@ -26,7 +26,7 @@ class RoomView(RetrieveAPIView):
     lookup_field = 'key'
     
     def get(self, request, *args, **kwargs):
-        field = request.GET.get(self.lookup_field)
+        field = self.kwargs.get(self.lookup_field)
         if field:
             filter = {self.lookup_field: field}
             room = get_object_or_404(self.queryset, **filter)
@@ -50,7 +50,7 @@ class GetRoomSettingsView(RetrieveAPIView):
     lookup_field = 'key'
     
     def get(self, request, *args, **kwargs):
-        field = request.GET.get(self.lookup_field)
+        field = self.kwargs.get(self.lookup_field)
         if field:
             filter = {self.lookup_field: field}
             queryset = Room.objects.filter(**filter)
@@ -65,7 +65,7 @@ class UpdateRoomSettingsView(UpdateAPIView):
     lookup_field = 'key'
     
     def put(self, request, *args, **kwargs):
-        room_key = request.data.get(self.lookup_field)
+        room_key = self.kwargs.get(self.lookup_field)
         serializer = self.serializer_class(data=request.data, partial=True)
         
         if not serializer.is_valid():
@@ -98,7 +98,7 @@ class JoinRoomView(UpdateAPIView):
     permission_classes = [IsAuthenticated]
     
     def put(self, request, *args, **kwargs):
-        room_key = request.data.get('room_key')
+        room_key = self.kwargs.get('key')
         room = Room.objects.get(key=room_key)
 
         if room.joined_users.contains(request.user):
@@ -121,7 +121,7 @@ class LeaveRoomView(UpdateAPIView):
     permission_classes = [IsAuthenticated]
     
     def put(self, request, *args, **kwargs):
-        room_key = request.data.get('room_key')
+        room_key = self.kwargs.get('key')
         room = Room.objects.get(key=room_key)
         
         user = request.user
@@ -134,7 +134,7 @@ class KickUserView(UpdateAPIView):
     permission_classes = [IsAuthenticated]
     
     def put(self, request, *args, **kwargs):
-        room_key = request.data.get('key')
+        room_key = self.kwargs.get('key')
         room = Room.objects.get(key=room_key)
         
         user_id = request.data.get('id')
@@ -148,7 +148,7 @@ class BanUnbanUserView(UpdateAPIView):
     permission_classes = [IsAuthenticated]
     
     def put(self, request, *args, **kwargs):
-        room_key = request.data.get('key')
+        room_key = self.kwargs.get('key')
         room = Room.objects.get(key=room_key)
         
         user_id = request.data.get('id')

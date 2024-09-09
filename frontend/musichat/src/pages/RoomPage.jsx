@@ -28,7 +28,7 @@ const RoomPage = (props) => {
 
     useEffect(() => async function () {
         try {
-            axios.get('/rooms/room', { params: { key: roomKey } })
+            axios.get(`/rooms/room/${roomKey}`)
                 .then((resp) => {
                     setRoom(resp.data);
                 });
@@ -91,16 +91,14 @@ const RoomPage = (props) => {
 
     onpagehide = (e) => {
         e.preventDefault();
-        const formData = new FormData();
-        formData.append('room_key', roomKey);
-        axios.put('/rooms/leave', formData);
+        axios.put(`/rooms/leave/${roomKey}`);
     };
 
     return (
         <>
             <div className='h-full w-full'>
                 <div className='flex h-fit max-h-fit m-2'>
-                    <LeaveRoomButton room_key={roomKey} socket={socket} />
+                    <LeaveRoomButton roomKey={roomKey} socket={socket} />
                 </div>
                 <div className='flex w-full max-h-full h-full space-x-4'>
                     <div className='bg-black max-w-[70%] w-[70%] h-full'>

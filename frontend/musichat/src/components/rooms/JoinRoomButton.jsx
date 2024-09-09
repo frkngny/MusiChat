@@ -6,14 +6,11 @@ import Swal from 'sweetalert2';
 const JoinRoomButton = (props) => {
     const { roomKey, ...others } = props;
 
-    const formData = new FormData();
-    formData.append('room_key', roomKey)
-
     const navigate = useNavigate();
     const axios = useAxios();
 
     const handleJoin = () => {
-        axios.put('/rooms/join', formData).then((resp) => {
+        axios.put(`/rooms/join/${roomKey}`).then((resp) => {
             if (Object.keys(resp.data).includes('success')) {
                 navigate(`/room/${roomKey}`);
             } else {

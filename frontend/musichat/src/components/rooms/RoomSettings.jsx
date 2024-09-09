@@ -27,12 +27,11 @@ const RoomSettings = (props) => {
         const allow_messages = e.target.allow_messages.checked;
 
         const formData = new FormData();
-        formData.append('key', roomKey)
         formData.append('max_users', max_users);
         formData.append('is_public', is_public);
         formData.append('allow_messages', allow_messages);
 
-        axios.put('/rooms/room/settings/update', formData).then((resp) => {
+        axios.put(`/rooms/room/${roomKey}/settings/update`, formData).then((resp) => {
             if (resp.data.error) {
                 setMaxusersErrorMessage(resp.data.error);
             } else {

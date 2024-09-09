@@ -12,17 +12,15 @@ const JoinedUsers = (props) => {
 
     const kickUser = (roomUserId) => {
         const formData = new FormData();
-        formData.append('key', room.key);
         formData.append('id', roomUserId);
-        axios.put('/rooms/room/kick', formData);
+        axios.put(`/rooms/room/${room.key}/kick`, formData);
     }
 
     const banUnbanUser = (roomUserId, operation) => {
         const formData = new FormData();
-        formData.append('key', room.key);
         formData.append('id', roomUserId);
         formData.append('operation', operation);
-        axios.put('/rooms/room/ban-unban', formData);
+        axios.put(`/rooms/room/${room.key}/ban-unban`, formData);
     }
 
     return (

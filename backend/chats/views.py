@@ -32,7 +32,7 @@ class CreateChatView(CreateAPIView):
 
 
 class CreateMessageView(CreateAPIView):
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
     serializer_class = SendMessageSerializer
     
     def post(self, request, *args, **kwargs):

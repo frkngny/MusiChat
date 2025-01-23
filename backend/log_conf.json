@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "disable_existing_loggers": false,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{"
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{"
+        }
+    },
+    "filters": {
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue"
+        }
+    },
+    "handlers": {
+        "console": {
+            "level": "INFO",
+            "filters": ["require_debug_true"],
+            "class": "logging.StreamHandler",
+            "formatter": "simple"
+        },
+        "debug": {
+            "level": "DEBUG",
+            "filters": ["require_debug_true"],
+            "class": "logging.FileHandler",
+            "filename": "./log/debug.log"
+        },
+        "error": {
+            "level": "ERROR",
+            "class": "logging.FileHandler",
+            "filename": "./log/error.log"
+        }
+    },
+    "root": {
+        "handlers": [
+            "console", "debug", "error"
+        ],
+        "level": "WARNING"
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["debug"],
+            "propagate": true
+        },
+        "django.request": {
+            "handlers": ["debug"],
+            "level": "DEBUG",
+            "propagate": false
+        }
+    }
+}
